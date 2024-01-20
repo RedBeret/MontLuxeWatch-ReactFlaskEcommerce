@@ -29,6 +29,10 @@ class Product(db.Model, SerializerMixin):
         return f"<Product {self.name}>"
 
 
+# Category Model
+# This class represents the categories of products that we're selling.
+# This is a many to many relationship between products and categories.
+# Two categories Genesis and Elite but some products are in both categories as it is the first of the lineup.
 class Category(db.Model, SerializerMixin):
     __tablename__ = "categories"
     id = db.Column(db.Integer, primary_key=True)
