@@ -51,5 +51,49 @@ def index():
     return "<h1>Mont Luxe Watch Company Ecommerce Platform</h1>"
 
 
+class Products(Resource):
+    def get(self):
+        return make_response(
+            [product.to_dict() for product in Product.query.all()], 200
+        )
+
+    def post(self):
+        data = request.get_json()
+        new_product = Product(
+            name=data["name"],
+            description=data["description"],
+            price=data["price"],
+            item_quantity=data["item_quantity"],
+            image_url=data["image_url"],
+        )
+        db.session.add(new_product)
+        db.session.commit()
+        return make_response(new_product.to_dict(), 201)
+
+    def patch(self, id):
+        data = request.get_json()
+        updated_records = Product.query.filter_by(id=id).update(data)
+        if updated_records:
+            db.session.commit()
+            product = Product.query.get(id)
+            return make_response(product.to_dict(), 200)
+        else:
+            return make_response({"error": "Product not found"}, 404)
+
+    def delete(self, id):
+        product = Product.query.get(id)
+        if product:
+            db.session.delete(product)
+            db.session.commit()
+            return make_response({}, 204)
+        else:
+            return make_response({"error": "Product not found"}, 404)
+
+
+api.add_resource(Products, "/products")
+api.add_resource(Users, "/users")
+api.add_resource(Orders, "/orders")
+api.add_resource(OrderDetails, "/order_details")
+
 if __name__ == "__main__":
     app.run(port=5555, debug=True)

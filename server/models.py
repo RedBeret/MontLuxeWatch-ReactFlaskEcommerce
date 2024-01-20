@@ -21,9 +21,10 @@ class Product(db.Model, SerializerMixin):
     item_quantity = db.Column(db.Integer, default=0)
     image_url = db.Column(db.String(255))
 
-    categories = db.relationship(
-        "Category", secondary="product_categories", back_populates="products"
+    product_categories = db.relationship(
+        "ProductCategory", back_populates="product", cascade="all, delete-orphan"
     )
+    categories = association_proxy("product_categories", "category")
 
     def __repr__(self):
         return f"<Product {self.name}>"
@@ -37,12 +38,32 @@ class Category(db.Model, SerializerMixin):
     __tablename__ = "categories"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True, nullable=False)
-    products = db.relationship(
-        "Product", secondary="product_categories", back_populates="categories"
+
+    product_categories = db.relationship(
+        "ProductCategory", back_populates="category", cascade="all, delete-orphan"
     )
+
+    products = association_proxy("product_categories", "product")
 
     def __repr__(self):
         return f"<Category {self.name}>"
+
+
+# ProductCategory Model
+# This class represents the relationship between products and categories.
+# This is a many to many relationship between products and categories.
+class ProductCategory(db.Model, SerializerMixin):
+    __tablename__ = "product_categories"
+
+    id = db.Column(db.Integer, primary_key=True)
+    product_id = db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey("categories.id"), nullable=False)
+
+    product = db.relationship("Product", back_populates="product_categories")
+    category = db.relationship("Category", back_populates="product_categories")
+
+    def __repr__(self):
+        return f"<ProductCategory Product: {self.product_id}, Category: {self.category_id}>"
 
 
 # User Model
@@ -59,19 +80,11 @@ class User(db.Model, SerializerMixin):
     shipping_city = db.Column(db.String(255))
     shipping_state = db.Column(db.String(255))
     shipping_zip = db.Column(db.String(255))
-    orders = db.relationship("Order", back_populates="user", lazy=True)
+
+    orders = db.relationship("Order", back_populates="user")
 
     def __repr__(self):
         return f"<User {self.username}>"
-
-
-product_categories = db.Table(
-    "product_categories",
-    db.Column("product_id", db.Integer, db.ForeignKey("products.id"), primary_key=True),
-    db.Column(
-        "category_id", db.Integer, db.ForeignKey("categories.id"), primary_key=True
-    ),
-)
 
 
 # Order Model
@@ -82,7 +95,8 @@ class Order(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-    order_details = db.relationship("OrderDetail", back_populates="order", lazy=True)
+
+    order_details = db.relationship("OrderDetail", back_populates="order")
 
     def __repr__(self):
         return f"<Order {self.id}>"
