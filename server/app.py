@@ -4,16 +4,14 @@
 # Standard library imports
 import os
 
-# Local imports
-from config import app, db
-
 # Remote library imports
-from config import app, db, api
-from models import Order, OrderDetail, Product, User
+# Local imports
+from config import api, app, db
+from flask import jsonify, make_response, request
 from flask_restful import Resource
+from models import Order, OrderDetail, Product, User
 from sqlalchemy.exc import IntegrityError
 from utils import commit_session
-from flask import jsonify, make_response, request
 
 # Builds app, set attributes
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -45,12 +43,24 @@ class Products(Resource):
     def post(self):
         product_data = request.get_json()
         try:
+            required_fields = [
+                "name",
+                "description",
+                "price",
+                "item_quantity",
+                "image_url",
+                "imageAlt",
+            ]
+            if not all(field in product_data for field in required_fields):
+                return make_response(jsonify({"error": "Missing required fields"}), 400)
+
             new_product = Product(
                 name=product_data["name"],
                 description=product_data["description"],
                 price=product_data["price"],
                 item_quantity=product_data["item_quantity"],
                 image_url=product_data["image_url"],
+                imageAlt=product_data["imageAlt"],
             )
             db.session.add(new_product)
             commit_session(db.session)
@@ -128,8 +138,8 @@ class Users(Resource):
 class Orders(Resource):
     def get(self):
         try:
-            orders = [order.to_dict() for order in Order.query.all()]
-            return jsonify(orders), 200
+            orders = Order.query.all()
+            return jsonify([order.to_dict() for order in orders])
         except Exception as error:
             return jsonify({"error": str(error)}), 500
 
@@ -137,8 +147,8 @@ class Orders(Resource):
 class OrderDetails(Resource):
     def get(self):
         try:
-            order_details = [detail.to_dict() for detail in OrderDetail.query.all()]
-            return jsonify(order_details), 200
+            order_details = OrderDetail.query.all()
+            return jsonify([detail.to_dict() for detail in order_details])
         except Exception as error:
             return jsonify({"error": str(error)}), 500
 

@@ -3,8 +3,12 @@
 # Import necessary modules from SQLAlchemy and SerializerMixin for serialization.
 from config import db
 from flask_sqlalchemy import SQLAlchemy
+from helpers import validate_not_blank, validate_positive_number, validate_type
+
+# from marshmallow import Schema, fields
 from sqlalchemy import MetaData
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.orm import validates
 from sqlalchemy_serializer import SerializerMixin
 
 # Models go here!
@@ -37,6 +41,31 @@ class Product(db.Model, SerializerMixin):
     )
     categories = association_proxy("product_categories", "category")
 
+    serialize_rules = ("-product_categories",)
+
+    # validations for Product Model
+    @validates("name", "description", "image_url", "imageAlt")
+    def validate_not_blank(self, key, value):
+        return validate_not_blank(value, key)
+
+    @validates("price")
+    def validate_price(self, key, price):
+        if not isinstance(price, (int, float)):
+            try:
+                price = float(price)
+            except (ValueError, TypeError):
+                raise ValueError(f"The {key} must be a number.")
+
+        if price < 0:
+            raise ValueError(f"The {key} must not be negative.")
+
+        return price
+
+    @validates("item_quantity")
+    def validate_item_quantity(self, key, item_quantity):
+        item_quantity = validate_positive_number(item_quantity, key)
+        return validate_type(item_quantity, key, int)
+
     def __repr__(self):
         return f"<Product {self.name}>"
 
@@ -56,6 +85,12 @@ class Category(db.Model, SerializerMixin):
 
     products = association_proxy("product_categories", "product")
 
+    serialize_rules = ("-product_categories",)
+
+    @validates("name")
+    def validate_name(self, key, name):
+        return validate_not_blank(name, key)
+
     def __repr__(self):
         return f"<Category {self.name}>"
 
@@ -72,6 +107,15 @@ class ProductCategory(db.Model, SerializerMixin):
 
     product = db.relationship("Product", back_populates="product_categories")
     category = db.relationship("Category", back_populates="product_categories")
+
+    serialize_rules = ("-product", "-category")
+
+    @validates("product_id", "category_id")
+    def validate_ids(self, key, value):
+        value = validate_type(value, key, int)
+        if value is None:
+            raise ValueError(f"{key} must not be null.")
+        return value
 
     def __repr__(self):
         return f"<ProductCategory Product: {self.product_id}, Category: {self.category_id}>"
