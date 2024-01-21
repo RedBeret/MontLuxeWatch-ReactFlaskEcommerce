@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
 
 # Standard library imports
-from random import choice as rc
-from random import randint
-
-# Local imports
-from app import Product, app, db
-
-# Remote library imports
+from random import randint, choice as rc
 from faker import Faker
-from models import Category, Order, OrderDetail, Product, User
-from sqlalchemy.exc import IntegrityError
+from config import app, db
+from models import Product, Category, Order, OrderDetail, User, ProductCategory
 from utils import commit_session, get_or_create_category
+from sqlalchemy.exc import IntegrityError
 
 products_data = [
     {
@@ -76,7 +71,8 @@ fake = Faker()
 def add_product_to_categories(product, category_names):
     for name in category_names:
         category = get_or_create_category(name)
-        product.categories.append(category)
+        product_category = ProductCategory(product=product, category=category)
+        db.session.add(product_category)
 
 
 if __name__ == "__main__":

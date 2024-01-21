@@ -3,57 +3,22 @@
 # Standard library imports
 import os
 
-from app import create_app, db
-
 # Local imports
 from config import app, db
 
 # Remote library imports
-from flask import Flask, jsonify, make_response, request
-from flask_cors import CORS
-from flask_migrate import Migrate
-from flask_restful import Api, Resource
-from flask_sqlalchemy import SQLAlchemy
-from models import Order, OrderDetail, Product, User, db
-from sqlalchemy import MetaData
+from config import app, db, api
+from models import Order, OrderDetail, Product, User
+from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 from utils import commit_session
+from flask import jsonify, make_response, request
 
 # Builds app, set attributes
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DATABASE = os.environ.get(
     "DB_URI", f"sqlite:///{os.path.join(BASE_DIR, 'instance', 'app.db')}"
 )
-
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.json.compact = False
-app = create_app()
-
-# Define metadata, Builds db, seen on other labs
-metadata = MetaData(
-    naming_convention={
-        "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-    }
-)
-db = SQLAlchemy(metadata=metadata)
-
-
-db = SQLAlchemy()
-migrate = Migrate()
-
-def create_app():
-    
-    
-migrate = Migrate(app=app, db=db)
-
-db.init_app(app=app)
-
-api = Api(app=app)
-
-# Builds CORS
-CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Add your model imports
 

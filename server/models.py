@@ -15,7 +15,6 @@ metadata = MetaData(
     }
 )
 
-db = SQLAlchemy(metadata=metadata)
 
 
 # Product Model
