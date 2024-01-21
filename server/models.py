@@ -1,11 +1,21 @@
 # Import necessary modules from SQLAlchemy and SerializerMixin for serialization.
 from config import db
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import MetaData
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy_serializer import SerializerMixin
 
 # Models go here!
 # one to many relationship between order and order details
 # one to many relationship between user and orders
+
+metadata = MetaData(
+    naming_convention={
+        "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    }
+)
+
+db = SQLAlchemy(metadata=metadata)
 
 
 # Product Model
@@ -20,6 +30,7 @@ class Product(db.Model, SerializerMixin):
     price = db.Column(db.Float, nullable=False)
     item_quantity = db.Column(db.Integer, default=0)
     image_url = db.Column(db.String(255))
+    imageAlt = db.Column(db.String(255))
 
     product_categories = db.relationship(
         "ProductCategory", back_populates="product", cascade="all, delete-orphan"
@@ -94,6 +105,7 @@ class Order(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user = db.relationship("User", back_populates="orders")
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     order_details = db.relationship("OrderDetail", back_populates="order")
@@ -112,6 +124,7 @@ class OrderDetail(db.Model, SerializerMixin):
     product_id = db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
 
+    order = db.relationship("Order", back_populates="order_details")
     product = db.relationship("Product")  # this is the product object we are linking to
 
     def __repr__(self):
