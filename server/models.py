@@ -1,3 +1,5 @@
+# models.py
+
 # Import necessary modules from SQLAlchemy and SerializerMixin for serialization.
 from config import db
 from flask_sqlalchemy import SQLAlchemy
@@ -14,7 +16,6 @@ metadata = MetaData(
         "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
     }
 )
-
 
 
 # Product Model
