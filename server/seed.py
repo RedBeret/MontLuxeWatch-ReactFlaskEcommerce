@@ -73,6 +73,37 @@ fake = Faker()
 bcrypt = Bcrypt(app)
 
 
+def create_fake_orders(num_orders=5):
+    for _ in range(num_orders):
+        user_id = rc(User.query.all()).id
+        order = Order(user_id=user_id)
+        db.session.add(order)
+
+    try:
+        db.session.commit()
+        print(f"Added {num_orders} fake orders.")
+    except Exception as e:
+        print(f"Error adding orders: {e}")
+
+
+def create_fake_order_details(num_details=10):
+    for _ in range(num_details):
+        order_id = rc(Order.query.all()).id
+        product_id = rc(Product.query.all()).id
+        quantity = randint(1, 5)
+
+        order_detail = OrderDetail(
+            order_id=order_id, product_id=product_id, quantity=quantity
+        )
+        db.session.add(order_detail)
+
+    try:
+        db.session.commit()
+        print(f"Added {num_details} fake order details.")
+    except Exception as e:
+        print(f"Error adding order details: {e}")
+
+
 def create_fake_users(num_users=10):
     for x in range(num_users):
         username = fake.user_name()
@@ -116,6 +147,8 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
         create_fake_users()
+        create_fake_orders()
+        create_fake_order_details()
 
         for product_data in products_data:
             try:

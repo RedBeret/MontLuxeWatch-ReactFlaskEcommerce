@@ -173,16 +173,37 @@ class Orders(Resource):
         except Exception as error:
             return make_response({"error": str(error)}, 500)
 
+    def post(self):
+        order_data = request.get_json()
+        try:
+            new_order = Order(user_id=order_data["user_id"])
+            db.session.add(new_order)
+            db.session.flush()
 
-# Order Schema
+            for detail in order_data["order_details"]:
+                order_detail = OrderDetail(
+                    order_id=new_order.id,
+                    product_id=detail["product_id"],
+                    quantity=detail["quantity"],
+                )
+                db.session.add(order_detail)
+
+            commit_session(db.session)
+            return make_response({"message": "Order created successfully"}, 201)
+        except Exception as e:
+            db.session.rollback()
+            return make_response({"error": "Order creation failed: " + str(e)}, 500)
+
+
 class OrderSchema(Schema):
     id = fields.Int(dump_only=True)
     user_id = fields.Int(load_only=True)
     created_at = fields.DateTime(dump_only=True)
-    order_details = fields.Nested("OrderDetailSchema", many=True, exclude=("order",))
+    order_details = fields.Nested("OrderDetailSchema", many=True)
 
-    def __repr__(self):
-        return f"<Order {self.id}>"
+    class Meta:
+        model = Order
+        include_fk = True
 
 
 class OrderDetails(Resource):
@@ -200,6 +221,10 @@ class OrderDetailSchema(Schema):
     order_id = fields.Int(load_only=True)
     product_id = fields.Int(required=True)
     quantity = fields.Int(required=True, validate=validate.Range(min=1))
+
+    class Meta:
+        model = OrderDetail
+        include_fk = True
 
     def __repr__(self):
         return f"<OrderDetail Order: {self.order_id}, Product: {self.product_id}>"

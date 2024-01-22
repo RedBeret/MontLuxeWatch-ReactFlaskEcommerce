@@ -184,3 +184,8 @@ class OrderDetail(db.Model, SerializerMixin):
     quantity = db.Column(db.Integer, nullable=False)
     order = db.relationship("Order", back_populates="order_details")
     product = db.relationship("Product")
+
+    serialize_rules = (
+        "-order",
+        "-product",
+    )
