@@ -4,9 +4,11 @@
 from random import choice as rc
 from random import randint
 
+import bcrypt
 from app import commit_session, get_or_create_category
 from config import app, db
 from faker import Faker
+from flask_bcrypt import Bcrypt
 from models import Category, Order, OrderDetail, Product, ProductCategory, User
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
@@ -68,6 +70,7 @@ products_data = [
 ]
 
 fake = Faker()
+bcrypt = Bcrypt(app)
 
 
 def create_fake_users(num_users=10):
@@ -81,16 +84,18 @@ def create_fake_users(num_users=10):
         if existing_user:
             print(f"User '{username}' or email '{email}' already exists. Skipping.")
             continue
+        fake_password = fake.password()
 
         user = User(
             username=username,
             email=email,
-            password="password",
             shipping_address=fake.address(),
             shipping_city=fake.city(),
             shipping_state=fake.state(),
             shipping_zip=fake.zipcode(),
         )
+        user.password = fake_password
+
         db.session.add(user)
 
     try:

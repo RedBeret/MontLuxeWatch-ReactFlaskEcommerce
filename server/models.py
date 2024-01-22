@@ -4,13 +4,12 @@
 # Import necessary modules from SQLAlchemy and SerializerMixin for serialization.
 import re
 
-from config import db
+from config import bcrypt, db
 from helpers import validate_not_blank, validate_positive_number, validate_type
 from sqlalchemy import MetaData
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import validates
 from sqlalchemy_serializer import SerializerMixin
-from werkzeug.security import check_password_hash, generate_password_hash
 
 # Models go here!
 # one to many relationship between order and order details
@@ -130,11 +129,12 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
+    _password_hash = db.Column("password_hash", db.String(255))
     shipping_address = db.Column(db.Text)
     shipping_city = db.Column(db.String(255))
     shipping_state = db.Column(db.String(255))
     shipping_zip = db.Column(db.String(255))
+
     orders = db.relationship("Order", back_populates="user")
 
     @property
@@ -143,7 +143,10 @@ class User(db.Model, SerializerMixin):
 
     @password.setter
     def password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self._password_hash = bcrypt.generate_password_hash(password).decode("utf-8")
+
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(self._password_hash, password)
 
     @validates("email")
     def validate_email(self, key, email):
@@ -151,13 +154,13 @@ class User(db.Model, SerializerMixin):
             raise ValueError("Invalid email address.")
         return email
 
-    def verify_password(self, password):
-        return check_password_hash(self.password_hash, password)
         # Stronger password validation for future reference
         # This will ensure the password is at least 8 characters long and contains a mix of letters, numbers, and special characters
         # if not re.match(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$', password):
         #     raise ValueError("Password must be at least 8 characters long and include letters, numbers, and special characters.")
         # return password
+
+    serialize_rules = ("-orders",)
 
 
 # Order Model

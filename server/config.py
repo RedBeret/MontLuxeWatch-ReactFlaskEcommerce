@@ -3,6 +3,7 @@
 
 # Remote library imports
 from flask import Flask
+from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 from flask_migrate import Migrate
@@ -28,6 +29,8 @@ db = SQLAlchemy(metadata=metadata)
 ma = Marshmallow(app)
 migrate = Migrate(app, db)
 db.init_app(app)
+
+bcrypt = Bcrypt(app)
 
 # Instantiate REST API
 api = Api(app)
