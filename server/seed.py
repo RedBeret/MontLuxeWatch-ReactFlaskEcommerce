@@ -4,11 +4,11 @@
 from random import choice as rc
 from random import randint
 
+from app import commit_session, get_or_create_category
 from config import app, db
 from faker import Faker
 from models import Category, Order, OrderDetail, Product, ProductCategory, User
 from sqlalchemy.exc import IntegrityError, NoResultFound
-from utils import commit_session, get_or_create_category
 
 products_data = [
     {
@@ -70,6 +70,36 @@ products_data = [
 fake = Faker()
 
 
+def create_fake_users(num_users=10):
+    for x in range(num_users):
+        username = fake.user_name()
+        email = fake.email()
+
+        existing_user = User.query.filter(
+            (User.username == username) | (User.email == email)
+        ).first()
+        if existing_user:
+            print(f"User '{username}' or email '{email}' already exists. Skipping.")
+            continue
+
+        user = User(
+            username=username,
+            email=email,
+            password="password",
+            shipping_address=fake.address(),
+            shipping_city=fake.city(),
+            shipping_state=fake.state(),
+            shipping_zip=fake.zipcode(),
+        )
+        db.session.add(user)
+
+    try:
+        db.session.commit()
+        print(f"Added {num_users} fake users.")
+    except Exception as e:
+        print(f"Error adding users: {e}")
+
+
 def add_product_to_categories(product, category_names):
     for name in category_names:
         category = get_or_create_category(name)
@@ -80,6 +110,7 @@ def add_product_to_categories(product, category_names):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+        create_fake_users()
 
         for product_data in products_data:
             try:

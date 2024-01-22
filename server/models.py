@@ -1,15 +1,16 @@
 # models.py
+# Models represent tables in database created with SQLAlchemy.
 
 # Import necessary modules from SQLAlchemy and SerializerMixin for serialization.
-from config import db
-from flask_sqlalchemy import SQLAlchemy
-from helpers import validate_not_blank, validate_positive_number, validate_type
+import re
 
-# from marshmallow import Schema, fields
+from config import db
+from helpers import validate_not_blank, validate_positive_number, validate_type
 from sqlalchemy import MetaData
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import validates
 from sqlalchemy_serializer import SerializerMixin
+from werkzeug.security import check_password_hash, generate_password_hash
 
 # Models go here!
 # one to many relationship between order and order details
@@ -126,50 +127,57 @@ class ProductCategory(db.Model, SerializerMixin):
 # Each user has an ID, username, email, and shipping address.
 class User(db.Model, SerializerMixin):
     __tablename__ = "users"
-
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    SimplePassword = db.Column(db.String(255), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
     shipping_address = db.Column(db.Text)
     shipping_city = db.Column(db.String(255))
     shipping_state = db.Column(db.String(255))
     shipping_zip = db.Column(db.String(255))
-
     orders = db.relationship("Order", back_populates="user")
 
-    def __repr__(self):
-        return f"<User {self.username}>"
+    @property
+    def password(self):
+        raise AttributeError("password is not a readable attribute")
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    @validates("email")
+    def validate_email(self, key, email):
+        if not re.match("[^@]+@[^@]+\.[^@]+", email):
+            raise ValueError("Invalid email address.")
+        return email
+
+    def verify_password(self, password):
+        return check_password_hash(self.password_hash, password)
+        # Stronger password validation for future reference
+        # This will ensure the password is at least 8 characters long and contains a mix of letters, numbers, and special characters
+        # if not re.match(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$', password):
+        #     raise ValueError("Password must be at least 8 characters long and include letters, numbers, and special characters.")
+        # return password
 
 
 # Order Model
 # Represents an order made by a user. An order can contain multiple products.
 class Order(db.Model, SerializerMixin):
     __tablename__ = "orders"
-
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    user = db.relationship("User", back_populates="orders")
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
-
     order_details = db.relationship("OrderDetail", back_populates="order")
-
-    def __repr__(self):
-        return f"<Order {self.id}>"
+    user = db.relationship("User", back_populates="orders")
 
 
 # OrderDetail Model
 # Links orders to products and includes the quantity of each product in an order.
 class OrderDetail(db.Model, SerializerMixin):
     __tablename__ = "order_details"
-
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey("orders.id"), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey("products.id"), nullable=False)
     quantity = db.Column(db.Integer, nullable=False)
-
     order = db.relationship("Order", back_populates="order_details")
-    product = db.relationship("Product")  # this is the product object we are linking to
-
-    def __repr__(self):
-        return f"<OrderDetail Order: {self.order_id}, Product: {self.product_id}>"
+    product = db.relationship("Product")
