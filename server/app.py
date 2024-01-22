@@ -150,15 +150,15 @@ class Users(Resource):
 # User Schema
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
-    username = fields.Str(required=True, validate=validate.Length(min=1))
+    username = fields.Str(required=True, validate=validate.Length(min=3))
     email = fields.Email(required=True)
     password = fields.Str(
         load_only=True, required=True, validate=validate.Length(min=6)
     )
-    shipping_address = fields.Str()
-    shipping_city = fields.Str()
-    shipping_state = fields.Str()
-    shipping_zip = fields.Str()
+    shipping_address = fields.Str(validate=validate.Length(min=1))
+    shipping_city = fields.Str(validate=validate.Length(min=1))
+    shipping_state = fields.Str(validate=validate.Length(min=1))
+    shipping_zip = fields.Str(validate=validate.Length(min=1))
     orders = fields.Nested("OrderSchema", many=True, exclude=("user",))
 
     def __repr__(self):
@@ -280,8 +280,8 @@ class ProductCategories(Resource):
 # OrderDetail Schema
 class OrderDetailSchema(Schema):
     id = fields.Int(dump_only=True)
-    order_id = fields.Int(load_only=True)
-    product_id = fields.Int(required=True)
+    order_id = fields.Int(load_only=True, validate=validate.Range(min=1))
+    product_id = fields.Int(required=True, validate=validate.Range(min=1))
     quantity = fields.Int(required=True, validate=validate.Range(min=1))
 
     class Meta:
