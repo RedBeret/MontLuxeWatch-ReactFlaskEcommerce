@@ -11,8 +11,9 @@ from config import api, app, db
 from dotenv import load_dotenv
 from flask import jsonify, make_response, request
 from flask_restful import Resource
+from helpers import validate_not_blank, validate_type
 from marshmallow import Schema, fields, validate
-from models import Category, Order, OrderDetail, Product, User
+from models import Category, Order, OrderDetail, Product, ProductCategory, User
 from sqlalchemy.exc import IntegrityError
 
 # Builds app, set attributes
@@ -29,7 +30,6 @@ def index():
     return "<h1>Mont Luxe Watch Company Ecommerce Platform</h1>"
 
 
-# TESTED ✅
 class Products(Resource):
     # TESTED ✅
     def get(self):
@@ -166,6 +166,7 @@ class UserSchema(Schema):
 
 
 class Orders(Resource):
+    # TESTED ✅
     def get(self):
         try:
             orders = Order.query.all()
@@ -173,6 +174,7 @@ class Orders(Resource):
         except Exception as error:
             return make_response({"error": str(error)}, 500)
 
+    # TESTED ✅
     def post(self):
         order_data = request.get_json()
         try:
@@ -207,12 +209,72 @@ class OrderSchema(Schema):
 
 
 class OrderDetails(Resource):
+    # TESTED ✅
     def get(self):
         try:
             order_details = OrderDetail.query.all()
             return make_response([detail.to_dict() for detail in order_details], 200)
         except Exception as error:
             return make_response({"error": str(error)}, 500)
+
+
+class Categories(Resource):
+    # TESTED ✅
+    def get(self):
+        Categories = Category.query.all()
+        return make_response([category.to_dict() for category in Categories], 200)
+
+    # TESTED ✅
+    def post(self):
+        category_data = request.get_json()
+        name = category_data.get("name")
+
+        try:
+            validate_not_blank(name, "name")
+            new_category = Category(name=name)
+            db.session.add(new_category)
+            db.session.commit()
+            return make_response({"message": "Category created successfully"}, 201)
+        except ValueError as e:
+            return make_response({"error": str(e)}, 400)
+        except Exception as e:
+            db.session.rollback()
+            return make_response({"error": "Failed to create category: " + str(e)}, 500)
+
+
+class ProductCategories(Resource):
+    # TESTED ✅
+    def get(self):
+        product_categories = ProductCategory.query.all()
+        return make_response(
+            [product_category.to_dict() for product_category in product_categories], 200
+        )
+
+    # TESTED ✅
+    def post(self):
+        data = request.get_json()
+        product_id = data.get("product_id")
+        category_id = data.get("category_id")
+
+        try:
+            validate_type(product_id, "product_id", int)
+            validate_type(category_id, "category_id", int)
+
+            new_product_category = ProductCategory(
+                product_id=product_id, category_id=category_id
+            )
+            db.session.add(new_product_category)
+            db.session.commit()
+            return make_response(
+                {"message": "ProductCategory created successfully"}, 201
+            )
+        except ValueError as e:
+            return make_response({"error": str(e)}, 400)
+        except Exception as e:
+            db.session.rollback()
+            return make_response(
+                {"error": "Failed to create product category: " + str(e)}, 500
+            )
 
 
 # OrderDetail Schema
@@ -252,6 +314,7 @@ def get_or_create_category(category_name):
 
 
 class Login(Resource):
+    # TESTED ✅
     def post(self):
         data = request.get_json()
 
@@ -275,6 +338,8 @@ api.add_resource(Orders, "/orders")
 api.add_resource(OrderDetails, "/order_details")
 api.add_resource(ProductByID, "/products/<int:id>")
 api.add_resource(Login, "/login")
+api.add_resource(Categories, "/categories")
+api.add_resource(ProductCategories, "/product_categories")
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
