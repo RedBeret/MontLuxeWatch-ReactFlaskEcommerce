@@ -30,7 +30,6 @@ def index():
     return "<h1>Mont Luxe Watch Company Ecommerce Platform</h1>"
 
 
-# TESTED ✅
 class Products(Resource):
     # TESTED ✅
     def get(self):
@@ -175,6 +174,7 @@ class Orders(Resource):
         except Exception as error:
             return make_response({"error": str(error)}, 500)
 
+    # TESTED ✅
     def post(self):
         order_data = request.get_json()
         try:
@@ -209,6 +209,7 @@ class OrderSchema(Schema):
 
 
 class OrderDetails(Resource):
+    # TESTED ✅
     def get(self):
         try:
             order_details = OrderDetail.query.all()
@@ -218,10 +219,12 @@ class OrderDetails(Resource):
 
 
 class Categories(Resource):
+    # TESTED ✅
     def get(self):
         Categories = Category.query.all()
         return make_response([category.to_dict() for category in Categories], 200)
 
+    # TESTED ✅
     def post(self):
         category_data = request.get_json()
         name = category_data.get("name")
@@ -240,12 +243,14 @@ class Categories(Resource):
 
 
 class ProductCategories(Resource):
+    # TESTED ✅
     def get(self):
         product_categories = ProductCategory.query.all()
         return make_response(
             [product_category.to_dict() for product_category in product_categories], 200
         )
 
+    # TESTED ✅
     def post(self):
         data = request.get_json()
         product_id = data.get("product_id")
@@ -309,6 +314,7 @@ def get_or_create_category(category_name):
 
 
 class Login(Resource):
+    # TESTED ✅
     def post(self):
         data = request.get_json()
 
