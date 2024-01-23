@@ -195,8 +195,7 @@ export default function NavbarMenu() {
 
                 {/* Cart Icon */}
                 <div className="ml-4 flow-root lg:ml-6">
-                  <a
-                    href="#"
+                  <button
                     className="group -m-2 flex items-center p-2"
                     onClick={(e) => {
                       e.preventDefault();
@@ -211,7 +210,7 @@ export default function NavbarMenu() {
                       {products.length} {/* Number of items in cart */}
                     </span>
                     <span className="sr-only">items in cart, view bag</span>
-                  </a>
+                  </button>
                 </div>
 
                 {/* ShoppingCart Component */}
