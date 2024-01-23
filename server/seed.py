@@ -3,6 +3,7 @@
 # Standard library imports
 from random import choice as rc
 from random import randint
+from venv import create
 
 import bcrypt
 from app import commit_session, get_or_create_category
@@ -149,39 +150,40 @@ def add_product_to_categories(product, category_names):
         db.session.add(product_category)
 
 
+def create_fake_products():
+    for product_data in products_data:
+        try:
+            existing_product = Product.query.filter_by(name=product_data["name"]).one()
+            print(f"Product '{existing_product.name}' already exists. Skipping.")
+        except NoResultFound:
+            product = Product(
+                name=product_data["name"],
+                description=fake.text(),
+                price=fake.random_int(min=3000000, max=16000000),
+                item_quantity=fake.random_int(min=0, max=50),
+                image_url=f"/{product_data['imageSrc']}",
+                imageAlt=product_data["imageAlt"],
+            )
+
+            category_names = (
+                product_data["category_name"]
+                if isinstance(product_data["category_name"], list)
+                else [product_data["category_name"]]
+            )
+            add_product_to_categories(product, category_names)
+
+            db.session.add(product)
+            try:
+                commit_session(db.session)
+            except IntegrityError as error:
+                print(f"Failed to add product: {product.name}. Error: {error}")
+
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
         create_fake_users()
         create_fake_orders()
-
-        for product_data in products_data:
-            try:
-                existing_product = Product.query.filter_by(
-                    name=product_data["name"]
-                ).one()
-                print(f"Product '{existing_product.name}' already exists. Skipping.")
-            except NoResultFound:
-                product = Product(
-                    name=product_data["name"],
-                    description=fake.text(),
-                    price=fake.random_int(min=30000, max=160000),
-                    item_quantity=fake.random_int(min=0, max=100),
-                    image_url=f"/{product_data['imageSrc']}",
-                    imageAlt=product_data["imageAlt"],
-                )
-
-                category_names = (
-                    product_data["category_name"]
-                    if isinstance(product_data["category_name"], list)
-                    else [product_data["category_name"]]
-                )
-                add_product_to_categories(product, category_names)
-
-                db.session.add(product)
-                try:
-                    commit_session(db.session)
-                except IntegrityError as error:
-                    print(f"Failed to add product: {product.name}. Error: {error}")
+        create_fake_products()
         create_fake_order_details()
         print("Database seeded successfully!")
