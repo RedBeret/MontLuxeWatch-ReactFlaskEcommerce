@@ -87,9 +87,14 @@ def create_fake_orders(num_orders=5):
 
 
 def create_fake_order_details(num_details=10):
+    products = Product.query.all()
+    if not products:
+        print("No products available to create order details.")
+        return
+
     for _ in range(num_details):
         order_id = rc(Order.query.all()).id
-        product_id = rc(Product.query.all()).id
+        product_id = rc(products).id
         quantity = randint(1, 5)
 
         order_detail = OrderDetail(
@@ -106,34 +111,35 @@ def create_fake_order_details(num_details=10):
 
 def create_fake_users(num_users=10):
     for x in range(num_users):
-        username = fake.user_name()
-        email = fake.email()
+        try:
+            username = fake.user_name()
+            email = fake.email()
 
-        existing_user = User.query.filter(
-            (User.username == username) | (User.email == email)
-        ).first()
-        if existing_user:
-            print(f"User '{username}' or email '{email}' already exists. Skipping.")
-            continue
-        fake_password = fake.password()
+            existing_user = User.query.filter(
+                (User.username == username) | (User.email == email)
+            ).first()
+            if existing_user:
+                print(f"User '{username}' or email '{email}' already exists. Skipping.")
+                continue
+            fake_password = fake.password()
 
-        user = User(
-            username=username,
-            email=email,
-            shipping_address=fake.address(),
-            shipping_city=fake.city(),
-            shipping_state=fake.state(),
-            shipping_zip=fake.zipcode(),
-        )
-        user.password = fake_password
+            user = User(
+                username=username,
+                email=email,
+                shipping_address=fake.address(),
+                shipping_city=fake.city(),
+                shipping_state=fake.state(),
+                shipping_zip=fake.zipcode(),
+                password=fake_password,  # Set the password here
+            )
 
-        db.session.add(user)
+            db.session.add(user)
+            db.session.commit()
+            print(f"Added user: {user.username}")
 
-    try:
-        db.session.commit()
-        print(f"Added {num_users} fake users.")
-    except Exception as e:
-        print(f"Error adding users: {e}")
+        except Exception as e:
+            print(f"Error adding user {username}: {e}")
+            db.session.rollback()
 
 
 def add_product_to_categories(product, category_names):
