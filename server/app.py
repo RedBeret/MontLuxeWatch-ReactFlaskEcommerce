@@ -59,7 +59,7 @@ class Products(Resource):
                 description=product_data["description"],
                 price=product_data["price"],
                 item_quantity=product_data["item_quantity"],
-                image_url=product_data["image_url"],
+                image_url=product_data["http://localhost:5555${product.image_url}"],
                 imageAlt=product_data["imageAlt"],
             )
             db.session.add(new_product)
