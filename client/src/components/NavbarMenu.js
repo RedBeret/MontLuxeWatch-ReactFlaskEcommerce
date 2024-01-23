@@ -10,95 +10,6 @@ import {
 } from "@heroicons/react/24/outline";
 import logos from "../assets/img/Montluxewatchlogo.png";
 
-const navigation = {
-  categories: [
-    {
-      id: "Main",
-      name: "Main",
-      featured: [
-        {
-          name: "New Arrivals",
-          href: "#",
-          imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/mega-menu-category-01.jpg",
-          imageAlt:
-            "Models sitting back to back, wearing Basic Tee in black and bone.",
-        },
-        {
-          name: "Basic Tees",
-          href: "#",
-          imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/mega-menu-category-02.jpg",
-          imageAlt:
-            "Close up of Basic Tee fall bundle with off-white, ochre, olive, and black tees.",
-        },
-      ],
-      sections: [
-        {
-          id: "watches",
-          name: "watches",
-          items: [
-            { name: "Watches", href: "#" },
-            { name: "Wallets", href: "#" },
-          ],
-        },
-        {
-          id: "straps",
-          name: "straps",
-          items: [
-            { name: "Full Nelson", href: "#" },
-            { name: "My Way", href: "#" },
-          ],
-        },
-      ],
-    },
-    {
-      id: "New Releases",
-      name: "New Releases",
-      featured: [
-        {
-          name: "New Arrivals",
-          href: "#",
-          imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/mega-menu-category-01.jpg",
-          imageAlt:
-            "Models sitting back to back, wearing Basic Tee in black and bone.",
-        },
-        {
-          name: "Basic Tees",
-          href: "#",
-          imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/mega-menu-category-02.jpg",
-          imageAlt:
-            "Close up of Basic Tee fall bundle with off-white, ochre, olive, and black tees.",
-        },
-      ],
-      sections: [
-        {
-          id: "watches",
-          name: "watches",
-          items: [
-            { name: "Watches", href: "#" },
-            { name: "Wallets", href: "#" },
-          ],
-        },
-        {
-          id: "straps",
-          name: "straps",
-          items: [
-            { name: "Full Nelson", href: "#" },
-            { name: "My Way", href: "#" },
-          ],
-        },
-      ],
-    },
-  ],
-  pages: [
-    { name: "Homepage", href: "/" },
-    { name: "About", href: "/about" },
-  ],
-};
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
@@ -289,7 +200,7 @@ export default function NavbarMenu() {
       </Transition.Root>
 
       <header className="relative bg-gray-900">
-        <p className="flex h-10 items-center justify-center bg-indigo-600 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
+        <p className="flex h-10 items-center justify-center bg-slate-800 px-4 text-sm font-medium text-white sm:px-6 lg:px-8">
           Get free delivery on orders over $100
         </p>
 
@@ -346,7 +257,7 @@ export default function NavbarMenu() {
                 {/* Sign in and Create account links */}
                 <div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6">
                   <Link
-                    to="/auth"
+                    to="/login"
                     className="text-sm font-medium text-white hover:text-gray-300"
                   >
                     Sign in
