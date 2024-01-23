@@ -96,7 +96,7 @@ export default function Footer() {
           {/* Company Logo and Name is here */}
           <button className="flex items-center">
             <img className="w-auto h-8" src={logo} alt="Mont Luxe Logo" />
-            <span className="ml-3 text-xl font-semibold">
+            <span className="ml-3 text-xl font-semibold text-white">
               Mont Luxe Watch Company
             </span>
           </button>
