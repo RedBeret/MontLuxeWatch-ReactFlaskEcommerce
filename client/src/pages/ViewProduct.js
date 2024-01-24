@@ -82,7 +82,7 @@ export default function ViewProduct() {
             type="submit"
             className="mt-10 w-full lg:w-auto flex items-center justify-center rounded-md border border-transparent bg-slate-600 px-8 py-3 text-base font-medium text-white hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
-            Add to bag
+            Add to Cart
           </button>
         </div>
       </div>
