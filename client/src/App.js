@@ -8,21 +8,23 @@ import About from "./pages/About";
 import Checkout from "./pages/Checkout";
 // import Login from "./pages/Login";
 // import Signup from "./pages/Signup";
-
+import { CartProvider } from "./components/CartContext";
 // Add missing imports
 function App() {
   return (
-    <Router>
-      <NavbarMenu />
-      <Switch>
-        <Route exact path="/" component={Home} />
-        <Route path="/about" component={About} />
-        <Route path="/checkout" component={Checkout} />
+    <CartProvider>
+      <Router>
+        <NavbarMenu />
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route path="/about" component={About} />
+          <Route path="/checkout" component={Checkout} />
 
-        <Route path="/viewproduct/:id" component={ViewProduct} />
-      </Switch>
-      <Footer />
-    </Router>
+          <Route path="/viewproduct/:id" component={ViewProduct} />
+        </Switch>
+        <Footer />
+      </Router>
+    </CartProvider>
   );
 }
 
