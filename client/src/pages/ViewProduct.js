@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { StarIcon } from "@heroicons/react/20/solid";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import { useCartContext } from "../components/CartContext";
 
 export default function ViewProduct() {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const [error, setError] = useState(null);
+  const { addToCart } = useCartContext();
 
   useEffect(() => {
     async function fetchProduct() {
@@ -77,9 +75,8 @@ export default function ViewProduct() {
           <p className="mt-1 text-lg font-medium text-gray-900">
             {formattedPrice}
           </p>
-
           <button
-            type="submit"
+            onClick={() => addToCart(product)}
             className="mt-10 w-full lg:w-auto flex items-center justify-center rounded-md border border-transparent bg-slate-600 px-8 py-3 text-base font-medium text-white hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
             Add to Cart

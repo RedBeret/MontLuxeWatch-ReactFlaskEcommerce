@@ -9,16 +9,13 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import logos from "../assets/img/Montluxewatchlogo.png";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
+import { useCartContext } from "./CartContext";
 
 // Main component
 export default function NavbarMenu() {
   const [cartOpen, setCartOpen] = useState(false);
-  const [products, setProducts] = useState([]);
   const [open, setOpen] = useState(false);
+  const { cartItems } = useCartContext();
   const handleCloseMenu = () => {
     setOpen(false);
   };
@@ -84,24 +81,22 @@ export default function NavbarMenu() {
 
                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
                   <div className="flow-root">
-                    <button
-                      className="-m-2 block p-2 font-medium text-white"
-                      onClick={() => {
-                        /* handle sign in logic */
-                      }}
-                    >
-                      Sign in
-                    </button>
-                  </div>
-                  <div className="flow-root">
-                    <button
-                      className="-m-2 block p-2 font-medium text-white"
-                      onClick={() => {
-                        /* handle create account logic */
-                      }}
-                    >
-                      Create account
-                    </button>
+                    <div className="flow-root">
+                      <Link
+                        to="/login"
+                        className="-m-2 block p-2 font-medium text-white"
+                      >
+                        Sign in
+                      </Link>
+                    </div>
+                    <div className="flow-root">
+                      <Link
+                        to="/signup"
+                        className="-m-2 block p-2 font-medium text-white"
+                      >
+                        Create account
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </Dialog.Panel>
@@ -207,7 +202,7 @@ export default function NavbarMenu() {
                       aria-hidden="true"
                     />
                     <span className="ml-2 text-sm font-medium text-white group-hover:text-gray-300">
-                      {products.length} {/* Number of items in cart */}
+                      {cartItems.length}
                     </span>
                     <span className="sr-only">items in cart, view bag</span>
                   </button>
@@ -215,11 +210,7 @@ export default function NavbarMenu() {
 
                 {/* ShoppingCart Component */}
                 {cartOpen && (
-                  <ShoppingCart
-                    open={cartOpen}
-                    setOpen={setCartOpen}
-                    products={products}
-                  />
+                  <ShoppingCart open={cartOpen} setOpen={setCartOpen} />
                 )}
               </div>
             </div>
