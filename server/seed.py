@@ -3,14 +3,13 @@
 # Standard library imports
 from random import choice as rc
 from random import randint
-from venv import create
 
-import bcrypt
 from app import commit_session, get_or_create_category
 from config import app, db
 from faker import Faker
 from flask_bcrypt import Bcrypt
-from models import Category, Order, OrderDetail, Product, ProductCategory, User
+from helpers import dollar_to_cents
+from models import Order, OrderDetail, Product, ProductCategory, User
 from sqlalchemy.exc import IntegrityError, NoResultFound
 
 products_data = [
@@ -111,32 +110,34 @@ def create_fake_order_details(num_details=10):
 
 
 def create_fake_users(num_users=10):
-    for x in range(num_users):
+    for _ in range(num_users):
         try:
-            username = fake.user_name()
+            first_name = fake.first_name()
+            last_name = fake.last_name()
+            username = f"{first_name.lower()}.{last_name.lower()}"
             email = fake.email()
 
             existing_user = User.query.filter(
                 (User.username == username) | (User.email == email)
             ).first()
             if existing_user:
-                print(f"User '{username}' or email '{email}' already exists. Skipping.")
                 continue
-            fake_password = fake.password()
 
             user = User(
+                first_name=first_name,
+                last_name=last_name,
                 username=username,
                 email=email,
                 shipping_address=fake.address(),
                 shipping_city=fake.city(),
                 shipping_state=fake.state(),
                 shipping_zip=fake.zipcode(),
-                password=fake_password,  # Set the password here
+                password=bcrypt.generate_password_hash(fake.password()).decode("utf-8"),
             )
 
             db.session.add(user)
             db.session.commit()
-            print(f"Added user: {user.username}")
+            print(f"Added user: {username}")
 
         except Exception as e:
             print(f"Error adding user {username}: {e}")
@@ -152,31 +153,38 @@ def add_product_to_categories(product, category_names):
 
 def create_fake_products():
     for product_data in products_data:
-        try:
-            existing_product = Product.query.filter_by(name=product_data["name"]).one()
+        product_name = product_data["name"].strip()
+        if not product_name:
+            product_name = fake.unique.company()
+
+        existing_product = Product.query.filter_by(name=product_name).first()
+        if existing_product:
             print(f"Product '{existing_product.name}' already exists. Skipping.")
-        except NoResultFound:
-            product = Product(
-                name=product_data["name"],
-                description=fake.text(),
-                price=fake.random_int(min=3000000, max=16000000),
-                item_quantity=fake.random_int(min=0, max=50),
-                image_url=f"/{product_data['imageSrc']}",
-                imageAlt=product_data["imageAlt"],
-            )
+            continue
 
-            category_names = (
-                product_data["category_name"]
-                if isinstance(product_data["category_name"], list)
-                else [product_data["category_name"]]
-            )
-            add_product_to_categories(product, category_names)
+        product = Product(
+            name=product_name,
+            description=fake.text(),
+            price=fake.random_int(min=30000, max=150000),
+            item_quantity=fake.random_int(min=0, max=50),
+            image_url=f"/{product_data['imageSrc']}",
+            imageAlt=product_data["imageAlt"],
+        )
 
-            db.session.add(product)
-            try:
-                commit_session(db.session)
-            except IntegrityError as error:
-                print(f"Failed to add product: {product.name}. Error: {error}")
+        category_names = (
+            product_data["category_name"]
+            if isinstance(product_data["category_name"], list)
+            else [product_data["category_name"]]
+        )
+        add_product_to_categories(product, category_names)
+
+        db.session.add(product)
+
+    try:
+        commit_session(db.session)
+        print("Products added successfully")
+    except IntegrityError as error:
+        print(f"Failed to add products. Error: {error}")
 
 
 if __name__ == "__main__":

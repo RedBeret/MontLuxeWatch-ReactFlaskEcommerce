@@ -34,12 +34,17 @@ class Products(Resource):
     # TESTED ✅
     def get(self):
         try:
-            products = [product.to_dict() for product in Product.query.all()]
+            products = [
+                product.to_dict(convert_price_to_dollars=True)
+                for product in Product.query.all()
+            ]
+
             return make_response({"products": products}, 200)
         except Exception as error:
             return make_response({"error": str(error)}, 500)
 
     # TESTED ✅
+
     def post(self):
         product_data = request.get_json()
         try:
@@ -54,12 +59,15 @@ class Products(Resource):
             if not all(field in product_data for field in required_fields):
                 return make_response({"error": "Missing required fields"}, 400)
 
+            # Convert price to cents
+            new_product_price = int(float(product_data["price"]) * 100)
+
             new_product = Product(
                 name=product_data["name"],
                 description=product_data["description"],
-                price=product_data["price"],
+                price=new_product_price,
                 item_quantity=product_data["item_quantity"],
-                image_url=product_data["http://localhost:5555${product.image_url}"],
+                image_url=product_data["image_url"],
                 imageAlt=product_data["imageAlt"],
             )
             db.session.add(new_product)
@@ -128,6 +136,8 @@ class Users(Resource):
             new_user = User(
                 username=user_data["username"],
                 email=user_data["email"],
+                first_name=user_data["first_name"],
+                last_name=user_data["last_name"],
                 shipping_address=user_data.get("shipping_address", ""),
                 shipping_city=user_data.get("shipping_city", ""),
                 shipping_state=user_data.get("shipping_state", ""),
@@ -135,7 +145,7 @@ class Users(Resource):
             )
             new_user.password = user_data["password"]
             db.session.add(new_user)
-            commit_session(db.session)  # Use your custom commit_session function
+            commit_session(db.session)
 
             return make_response({"message": "User created successfully"}, 201)
         except IntegrityError:
@@ -152,6 +162,8 @@ class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.Str(required=True, validate=validate.Length(min=3))
     email = fields.Email(required=True)
+    first_name = fields.Str(required=True, validate=validate.Length(min=1))
+    last_name = fields.Str(required=True, validate=validate.Length(min=1))
     password = fields.Str(
         load_only=True, required=True, validate=validate.Length(min=6)
     )
