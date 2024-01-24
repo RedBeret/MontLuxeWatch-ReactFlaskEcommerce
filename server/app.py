@@ -137,8 +137,8 @@ class Users(Resource):
             new_user = User(
                 username=user_data["username"],
                 email=user_data["email"],
-                first_name=user_data["first_name"],
-                last_name=user_data["last_name"],
+                first_name=user_data.get("first_name", ""),
+                last_name=user_data.get("last_name", ""),
                 shipping_address=user_data.get("shipping_address", ""),
                 shipping_city=user_data.get("shipping_city", ""),
                 shipping_state=user_data.get("shipping_state", ""),
@@ -158,20 +158,50 @@ class Users(Resource):
             return make_response({"error": "User creation failed: " + str(error)}, 500)
 
 
+class UserByID(Resource):
+    def delete(self, id):
+        try:
+            user = User.query.get(id)
+            if not user:
+                return make_response({"error": "User not found"}, 404)
+
+            db.session.delete(user)
+            commit_session(db.session)
+            return make_response({"message": "User deleted successfully"}, 200)
+        except Exception as error:
+            return make_response({"error": str(error)}, 500)
+
+    def patch(self, id):
+        UserInfo = request.get_json()
+        try:
+            user = User.query.get(id)
+            if not user:
+                return make_response({"error": "User not found"}, 404)
+
+            if "password" in UserInfo:
+                user.password = UserInfo["password"]
+                commit_session(db.session)
+                return make_response({"message": "Password updated successfully"}, 200)
+
+            return make_response({"error": "No update to User Info provided"}, 400)
+        except Exception as error:
+            return make_response({"error": str(error)}, 500)
+
+
 # User Schema
 class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.Str(required=True, validate=validate.Length(min=3))
     email = fields.Email(required=True)
-    first_name = fields.Str(required=True, validate=validate.Length(min=1))
-    last_name = fields.Str(required=True, validate=validate.Length(min=1))
+    first_name = fields.Str(required=False, validate=validate.Length(min=1))
+    last_name = fields.Str(required=False, validate=validate.Length(min=1))
     password = fields.Str(
         load_only=True, required=True, validate=validate.Length(min=6)
     )
-    shipping_address = fields.Str(validate=validate.Length(min=1))
-    shipping_city = fields.Str(validate=validate.Length(min=1))
-    shipping_state = fields.Str(validate=validate.Length(min=1))
-    shipping_zip = fields.Str(validate=validate.Length(min=1))
+    shipping_address = fields.Str(required=False, validate=validate.Length(min=1))
+    shipping_city = fields.Str(required=False, validate=validate.Length(min=1))
+    shipping_state = fields.Str(required=False, validate=validate.Length(min=1))
+    shipping_zip = fields.Str(required=False, validate=validate.Length(min=1))
     orders = fields.Nested("OrderSchema", many=True, exclude=("user",))
 
     def __repr__(self):
@@ -340,7 +370,9 @@ class Login(Resource):
         user = User.query.filter_by(username=username).first()
 
         if user and user.authenticate(password):
-            return make_response({"message": "Login successful"}, 200)
+            return make_response(
+                {"message": "Login successful", "user_id": user.id}, 200
+            )
         else:
             return make_response({"error": "Invalid credentials"}, 401)
 
@@ -353,6 +385,7 @@ api.add_resource(ProductByID, "/products/<int:id>")
 api.add_resource(Login, "/login")
 api.add_resource(Categories, "/categories")
 api.add_resource(ProductCategories, "/product_categories")
+api.add_resource(UserByID, "/users/<int:id>")
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)

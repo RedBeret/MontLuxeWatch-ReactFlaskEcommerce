@@ -6,29 +6,37 @@ import NavbarMenu from "./components/NavbarMenu";
 import ViewProduct from "./pages/ViewProduct";
 import About from "./pages/About";
 import Checkout from "./pages/Checkout";
-// import Login from "./pages/Login";
-// import Signup from "./pages/Signup";
-import { CartProvider } from "./components/CartContext";
-// Add missing imports
-function App() {
-  return (
-    <CartProvider>
-      <Router>
-        <NavbarMenu />
-        <Switch>
-          <Route exact path="/" component={Home} />
-          <Route path="/about" component={About} />
-          <Route path="/checkout" component={Checkout} />
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import { CartWrapper } from "./components/CartContext";
+import { UserWrapper } from "./components/UserContext";
+import DeleteUser from "./pages/DeleteUser";
+import UpdatePassword from "./pages/UpdatePassword";
 
-          <Route path="/viewproduct/:id" component={ViewProduct} />
-        </Switch>
-        <Footer />
-      </Router>
-    </CartProvider>
-  );
+function App() {
+    return (
+        <UserWrapper>
+            <CartWrapper>
+                <Router>
+                    <NavbarMenu />
+                    <Switch>
+                        <Route exact path="/" component={Home} />
+                        <Route path="/about" component={About} />
+                        <Route path="/checkout" component={Checkout} />
+                        <Route path="/login" component={Login} />
+                        <Route path="/signup" component={Signup} />
+                        <Route path="/deleteuser" component={DeleteUser} />
+                        <Route path="/UpdatePassword" component={UpdatePassword} />
+                        <Route
+                            path="/viewproduct/:id"
+                            component={ViewProduct}
+                        />
+                    </Switch>
+                    <Footer />
+                </Router>
+            </CartWrapper>
+        </UserWrapper>
+    );
 }
 
 export default App;
-
-//  <Route path="/login" component={Login} />
-// <Route path="/signup" component={Signup} />

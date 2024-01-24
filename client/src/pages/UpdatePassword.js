@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { Link, useHistory } from "react-router-dom";
 import { useUserContext } from "../components/UserContext";
 
-export default function Signup() {
+export default function UpdatePassword() {
     const history = useHistory();
     const { login } = useUserContext();
 
@@ -42,7 +42,7 @@ export default function Signup() {
             });
 
             if (!response.ok) {
-                throw new Error("Signup failed");
+                throw new Error("Update Password failed");
             }
 
             // Update the context and redirect with alert
@@ -50,7 +50,7 @@ export default function Signup() {
             history.push("/");
             alert("You are now logged in!");
         } catch (error) {
-            console.error("Error during signup:", error);
+            console.error("Error during Update Password:", error);
         }
 
         setSubmitting(false);
@@ -135,7 +135,7 @@ export default function Signup() {
                                     disabled={isSubmitting}
                                     className="w-full py-3 px-4 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-gray-600"
                                 >
-                                    Sign up
+                                    Update Password
                                 </button>
                             </Form>
                         )}

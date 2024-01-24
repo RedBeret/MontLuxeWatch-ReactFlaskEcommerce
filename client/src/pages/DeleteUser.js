@@ -1,56 +1,48 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Link, useHistory } from "react-router-dom";
-import { useUserContext } from "../components/UserContext";
+import { useHistory, Link } from "react-router-dom";
+import { useUserContext } from "../components/UserContext.js";
 
-export default function Signup() {
+export default function DeleteUser() {
     const history = useHistory();
-    const { login } = useUserContext();
+    const { deleteUser } = useUserContext();
 
     const initialValues = {
-        email: "",
         username: "",
         password: "",
-        confirmPassword: "",
     };
 
     const validationSchema = Yup.object().shape({
-        email: Yup.string().email("Invalid email").required("Required"),
         username: Yup.string().required("Required"),
-        password: Yup.string()
-            .min(6, "Password must be at least 6 characters")
-            .required("Required"),
-        confirmPassword: Yup.string()
-            .oneOf([Yup.ref("password"), null], "Passwords must match")
-            .required("Required"),
+        password: Yup.string().required("Required"),
     });
 
-    const onSubmit = async (values, { setSubmitting }) => {
-        const { username, email, password } = values;
-        const userData = {
-            username,
-            email,
-            password,
-        };
+    const onSubmit = async (values, { setSubmitting, setErrors }) => {
+        const { username, password } = values;
 
         try {
-            const response = await fetch("/users", {
+            // First, validate the user login to get the user ID
+            const loginResponse = await fetch("/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(userData),
+                body: JSON.stringify({ username, password }),
             });
 
-            if (!response.ok) {
-                throw new Error("Signup failed");
+            if (!loginResponse.ok) {
+                throw new Error("Login failed");
             }
 
-            // Update the context and redirect with alert
-            login({ username, email });
-            history.push("/");
-            alert("You are now logged in!");
+            const { user_id } = await loginResponse.json();
+
+            // Next, proceed to delete the user
+            await deleteUser(user_id); // deleteUser should be a function in your UserContext that handles the delete operation
+
+            alert("Account deleted successfully");
+            history.push("/"); // Redirect to home or login page
         } catch (error) {
-            console.error("Error during signup:", error);
+            console.error("Error during account deletion:", error);
+            setErrors({ server: error.message });
         }
 
         setSubmitting(false);
@@ -62,15 +54,15 @@ export default function Signup() {
                 <div className="p-4 sm:p-7">
                     <div className="text-center">
                         <h1 className="block text-2xl font-bold text-gray-800 dark:text-white">
-                            Sign up
+                            Login
                         </h1>
                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                            Already have an account?{" "}
+                            Don't have an account?{" "}
                             <Link
-                                to="/login"
+                                to="/signup"
                                 className="text-blue-600 hover:underline font-medium dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
                             >
-                                Sign in here
+                                Sign up here
                             </Link>
                         </p>
                     </div>
@@ -95,18 +87,6 @@ export default function Signup() {
                                 />
 
                                 <Field
-                                    name="email"
-                                    type="email"
-                                    placeholder="Email"
-                                    className="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-                                />
-                                <ErrorMessage
-                                    name="email"
-                                    component="div"
-                                    className="text-red-500 text-xs mt-1"
-                                />
-
-                                <Field
                                     name="password"
                                     type="password"
                                     placeholder="Password"
@@ -118,24 +98,12 @@ export default function Signup() {
                                     className="text-red-500 text-xs mt-1"
                                 />
 
-                                <Field
-                                    name="confirmPassword"
-                                    type="password"
-                                    placeholder="Confirm Password"
-                                    className="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
-                                />
-                                <ErrorMessage
-                                    name="confirmPassword"
-                                    component="div"
-                                    className="text-red-500 text-xs mt-1"
-                                />
-
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full py-3 px-4 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-gray-600"
+                                    className="w-full py-3 px-4 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-gray-600"
                                 >
-                                    Sign up
+                                    Delete Account
                                 </button>
                             </Form>
                         )}
