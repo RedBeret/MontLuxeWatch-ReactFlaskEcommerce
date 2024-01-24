@@ -34,6 +34,7 @@ class Products(Resource):
     # TESTED ✅
     def get(self):
         try:
+            products = [product.to_dict() for product in Product.query.all()]
             products = [
                 product.to_dict(convert_price_to_dollars=True)
                 for product in Product.query.all()
@@ -86,7 +87,7 @@ class ProductByID(Resource):
     def get(self, id):
         product = Product.query.get(id)
         if product:
-            return make_response(product.to_dict(), 200)
+            return make_response(product.to_dict(convert_price_to_dollars=True), 200)
         else:
             return make_response({"error": "Product not found"}, 404)
 
