@@ -1,5 +1,5 @@
-import { Fragment, useState, useEffect } from "react";
-import { Dialog, Tab, Transition } from "@headlessui/react";
+import React, { Fragment, useState } from "react";
+import { Dialog, Transition } from "@headlessui/react";
 import ShoppingCart from "./ShoppingCart";
 import { Link } from "react-router-dom";
 import {
@@ -18,22 +18,10 @@ function classNames(...classes) {
 export default function NavbarMenu() {
   const [cartOpen, setCartOpen] = useState(false);
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-
   const [open, setOpen] = useState(false);
-  useEffect(() => {
-    async function fetchCategories() {
-      try {
-        const response = await fetch("/api/categories");
-        const data = await response.json();
-        setCategories(data);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    }
-
-    fetchCategories();
-  }, []);
+  const handleCloseMenu = () => {
+    setOpen(false);
+  };
   return (
     <div className="bg-gray-900 text-white">
       {/* Mobile menu */}
@@ -73,103 +61,26 @@ export default function NavbarMenu() {
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
                 </div>
+
                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
-                  {navigation.pages.map((page) => (
-                    <div key={page.name} className="flow-root">
-                      <a
-                        href={page.href}
-                        className="-m-2 block p-2 font-medium text-white"
-                      >
-                        {page.name}
-                      </a>
-                    </div>
-                  ))}
+                  {/* navigation links */}
+                  <Link
+                    to="/"
+                    className="-m-2 block p-2 font-medium text-white"
+                    onClick={handleCloseMenu}
+                  >
+                    Home
+                  </Link>
+                  <Link
+                    to="/about"
+                    className="-m-2 block p-2 font-medium text-white"
+                    onClick={handleCloseMenu}
+                  >
+                    About
+                  </Link>
                 </div>
-                {/* Links */}
-                <Tab.Group as="div" className="mt-2">
-                  <div className="border-b border-gray-200">
-                    <Tab.List className="-mb-px flex space-x-8 px-4">
-                      {navigation.categories.map((category) => (
-                        <Tab
-                          key={category.name}
-                          className={({ selected }) =>
-                            classNames(
-                              selected
-                                ? "border-indigo-600 text-indigo-600"
-                                : "border-transparent text-white",
-                              "flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-medium"
-                            )
-                          }
-                        >
-                          {category.name}
-                        </Tab>
-                      ))}
-                    </Tab.List>
-                  </div>
-                  <Tab.Panels as={Fragment}>
-                    {categories.map((category) => (
-                      <Tab.Panel
-                        key={category.id}
-                        className="space-y-10 px-4 pb-8 pt-10"
-                      >
-                        <div className="grid grid-cols-2 gap-x-4">
-                          {category.featured.map((item) => (
-                            <div
-                              key={item.name}
-                              className="group relative text-sm"
-                            >
-                              <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-                                <img
-                                  src={item.imageSrc}
-                                  alt={item.imageAlt}
-                                  className="object-cover object-center"
-                                />
-                              </div>
-                              <a
-                                href={item.href}
-                                className="mt-6 block font-medium text-white"
-                              >
-                                <span
-                                  className="absolute inset-0 z-10"
-                                  aria-hidden="true"
-                                />
-                                {item.name}
-                              </a>
-                              <p aria-hidden="true" className="mt-1">
-                                Shop now
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                        {category.sections.map((section) => (
-                          <div key={section.name}>
-                            <p
-                              id={`${category.id}-${section.id}-heading-mobile`}
-                              className="font-medium text-white"
-                            >
-                              {section.name}
-                            </p>
-                            <ul
-                              aria-labelledby={`${category.id}-${section.id}-heading-mobile`}
-                              className="mt-6 flex flex-col space-y-6"
-                            >
-                              {section.items.map((item) => (
-                                <li key={item.name} className="flow-root">
-                                  <a
-                                    href={item.href}
-                                    className="-m-2 block p-2 text-gray-500"
-                                  >
-                                    {item.name}
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
-                      </Tab.Panel>
-                    ))}
-                  </Tab.Panels>
-                </Tab.Group>
+
+                <div className="space-y-6 border-t border-gray-200 px-4 py-6"></div>
 
                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
                   <div className="flow-root">
@@ -210,7 +121,6 @@ export default function NavbarMenu() {
           className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
         >
           <div className="border-b border-gray-700">
-            {" "}
             {/* Darker border color */}
             <div className="flex h-16 items-center">
               {/* Mobile menu button */}
@@ -271,10 +181,9 @@ export default function NavbarMenu() {
                   </Link>
                 </div>
 
-                {/* Search */}
+                {/* Search - !! might remove*/}
                 <div className="flex lg:ml-6">
                   <a href="#" className="p-2 text-gray-300 hover:text-white">
-                    {" "}
                     {/* Light text and hover effect */}
                     <span className="sr-only">Search</span>
                     <MagnifyingGlassIcon
@@ -286,12 +195,11 @@ export default function NavbarMenu() {
 
                 {/* Cart Icon */}
                 <div className="ml-4 flow-root lg:ml-6">
-                  <a
-                    href="#"
+                  <button
                     className="group -m-2 flex items-center p-2"
                     onClick={(e) => {
-                      e.preventDefault(); // Prevent default link behavior
-                      setCartOpen(!cartOpen); // Toggle the cart open state
+                      e.preventDefault();
+                      setCartOpen(!cartOpen);
                     }}
                   >
                     <ShoppingBagIcon
@@ -302,7 +210,7 @@ export default function NavbarMenu() {
                       {products.length} {/* Number of items in cart */}
                     </span>
                     <span className="sr-only">items in cart, view bag</span>
-                  </a>
+                  </button>
                 </div>
 
                 {/* ShoppingCart Component */}
