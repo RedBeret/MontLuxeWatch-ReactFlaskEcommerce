@@ -5,7 +5,12 @@
 import re
 
 from config import bcrypt, db
-from helpers import validate_not_blank, validate_positive_number, validate_type
+from helpers import (
+    dollar_to_cents,
+    validate_not_blank,
+    validate_positive_number,
+    validate_type,
+)
 from sqlalchemy import MetaData
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import validates
@@ -31,7 +36,7 @@ class Product(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
-    price = db.Column(db.Float, nullable=False)
+    price = db.Column(db.Integer, nullable=False)
     item_quantity = db.Column(db.Integer, default=0)
     image_url = db.Column(db.String(255))
     imageAlt = db.Column(db.String(255))
@@ -50,21 +55,25 @@ class Product(db.Model, SerializerMixin):
 
     @validates("price")
     def validate_price(self, key, price):
-        if not isinstance(price, (int, float)):
-            try:
-                price = float(price)
-            except (ValueError, TypeError):
-                raise ValueError(f"The {key} must be a number.")
-
-        if price < 0:
-            raise ValueError(f"The {key} must not be negative.")
-
-        return price
+        price_in_cents = validate_positive_number(dollar_to_cents(price), key)
+        return price_in_cents
 
     @validates("item_quantity")
     def validate_item_quantity(self, key, item_quantity):
         item_quantity = validate_positive_number(item_quantity, key)
         return validate_type(item_quantity, key, int)
+
+    def to_dict(self, convert_price_to_dollars=False):
+        data = {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "price": self.price / 100 if convert_price_to_dollars else self.price,
+            "item_quantity": self.item_quantity,
+            "image_url": self.image_url,
+            "imageAlt": self.imageAlt,
+        }
+        return data
 
     def __repr__(self):
         return f"<Product {self.name}>"
@@ -129,6 +138,8 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
+    first_name = db.Column(db.String(255), nullable=False)
+    last_name = db.Column(db.String(255), nullable=False)
     _password_hash = db.Column("password_hash", db.String(255))
     shipping_address = db.Column(db.Text)
     shipping_city = db.Column(db.String(255))
