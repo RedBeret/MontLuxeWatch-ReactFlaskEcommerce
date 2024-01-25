@@ -5,11 +5,11 @@ import InfoSection from "../components/InfoSection";
 import Products from "../components/Products";
 
 export default function Home() {
-  return (
-    <>
-      <Hero />
-      <Products />
-      <InfoSection />
-    </>
-  );
+    return (
+        <>
+            <Hero />
+            <Products />
+            <InfoSection />
+        </>
+    );
 }

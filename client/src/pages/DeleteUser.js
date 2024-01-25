@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
 
-export default function Login() {
+export default function DeleteUser() {
     const history = useHistory();
-    const [loginError, setLoginError] = useState("");
-    const [loginSuccess, setLoginSuccess] = useState("");
 
     const initialValues = {
         username: "",
@@ -18,27 +16,29 @@ export default function Login() {
         password: Yup.string().required("Required"),
     });
 
-    const onSubmit = async (values, { setSubmitting, setErrors }) => {
+    const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
+
+    const onSubmit = async (values, { setSubmitting }) => {
         const { username, password } = values;
 
         try {
-            const response = await fetch("/login", {
-                method: "POST",
+            // Proceed to delete the user using the provided credentials
+            const deleteResponse = await fetch("/users", {
+                method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, password }),
             });
 
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || "Login failed");
+            if (!deleteResponse.ok) {
+                throw new Error("Account deletion failed");
             }
 
-            setLoginSuccess("Login successful!");
+            setSuccess("Account deleted successfully");
             setTimeout(() => history.push("/"), 1000);
         } catch (error) {
-            console.error("Error during login:", error);
-            setErrors({ server: error.message });
-            setLoginError(error.message);
+            console.error("Error during account deletion:", error);
+            setError(error.message);
         }
 
         setSubmitting(false);
@@ -46,29 +46,31 @@ export default function Login() {
 
     return (
         <main className="w-full max-w-md mx-auto p-6">
-            {loginError && (
+            {error && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-                    <span className="block sm:inline">{loginError}</span>
+                    <span className="block sm:inline">{error}</span>
                 </div>
-            )}{" "}
-            {loginSuccess && (
+            )}
+
+            {success && (
                 <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
-                    <span className="block sm:inline">{loginSuccess}</span>
+                    <span className="block sm:inline">{success}</span>
                 </div>
-            )}{" "}
+            )}
+
             <div className="mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
                 <div className="p-4 sm:p-7">
                     <div className="text-center">
                         <h1 className="block text-2xl font-bold text-gray-800 dark:text-white">
-                            Login
+                            Delete Account
                         </h1>
                         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                            Don't have an account?{" "}
+                            Are you sure you want to delete your account?{" "}
                             <Link
-                                to="/signup"
+                                to="/"
                                 className="text-blue-600 hover:underline font-medium dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
                             >
-                                Sign up here
+                                Cancel
                             </Link>
                         </p>
                     </div>
@@ -104,12 +106,18 @@ export default function Login() {
                                     className="text-red-500 text-xs mt-1"
                                 />
 
+                                {error && (
+                                    <div className="text-red-500 text-xs mt-2">
+                                        {error}
+                                    </div>
+                                )}
+
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="w-full py-3 px-4 text-sm font-semibold rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-gray-600"
+                                    className="w-full py-3 px-4 text-sm font-semibold rounded-lg bg-red-600 text-white hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-gray-600"
                                 >
-                                    Login
+                                    Delete Account
                                 </button>
                             </Form>
                         )}

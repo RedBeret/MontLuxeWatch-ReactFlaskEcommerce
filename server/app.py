@@ -2,8 +2,10 @@
 # app.py
 # here we will have route definitions and logic for our API
 
-# Standard library imports
 import os
+
+# Standard library imports
+from email.headerregistry import HeaderRegistry
 
 # Remote library imports
 # Local imports
@@ -137,8 +139,8 @@ class Users(Resource):
             new_user = User(
                 username=user_data["username"],
                 email=user_data["email"],
-                first_name=user_data["first_name"],
-                last_name=user_data["last_name"],
+                first_name=user_data.get("first_name", ""),
+                last_name=user_data.get("last_name", ""),
                 shipping_address=user_data.get("shipping_address", ""),
                 shipping_city=user_data.get("shipping_city", ""),
                 shipping_state=user_data.get("shipping_state", ""),
@@ -149,13 +151,62 @@ class Users(Resource):
             commit_session(db.session)
 
             return make_response({"message": "User created successfully"}, 201)
-        except IntegrityError:
-            return make_response(
-                {"error": "User creation failed due to a database error."},
-                400,
-            )
+        except IntegrityError as e:
+            db.session.rollback()
+            if "UNIQUE constraint failed" in str(e):
+                return make_response(
+                    {"error": "Username or email already exists."}, 409
+                )
+            else:
+                return make_response({"error": "Database integrity error."}, 500)
+
         except Exception as error:
+            db.session.rollback()
             return make_response({"error": "User creation failed: " + str(error)}, 500)
+
+    def delete(self):
+        try:
+            data = request.get_json()
+            if not all(key in data for key in ("username", "password")):
+                return make_response(
+                    {"error": "Username and password are required"}, 400
+                )
+
+            username = data["username"]
+            password = data["password"]
+
+            user = User.query.filter_by(username=username).first()
+
+            if user and user.authenticate(password):
+                user_to_delete = user
+                db.session.delete(user_to_delete)
+                commit_session(db.session)
+                return make_response({"message": "User deleted successfully"}, 200)
+            else:
+                return make_response({"error": "Invalid credentials"}, 401)
+        except Exception as error:
+            return make_response({"error": str(error)}, 500)
+
+    def patch(self):
+        data = request.get_json()
+        try:
+            if not all(key in data for key in ("username", "password", "newPassword")):
+                return make_response({"error": "Required fields are missing"}, 400)
+
+            username = data["username"]
+            password = data["password"]
+            new_password = data["newPassword"]
+
+            user = User.query.filter_by(username=username).first()
+
+            if user and user.authenticate(password):
+                user.password = new_password
+                commit_session(db.session)
+                return make_response({"message": "Password updated successfully"}, 200)
+            else:
+                return make_response({"error": "Invalid credentials"}, 401)
+        except Exception as error:
+            return make_response({"error": str(error)}, 500)
 
 
 # User Schema
@@ -163,15 +214,15 @@ class UserSchema(Schema):
     id = fields.Int(dump_only=True)
     username = fields.Str(required=True, validate=validate.Length(min=3))
     email = fields.Email(required=True)
-    first_name = fields.Str(required=True, validate=validate.Length(min=1))
-    last_name = fields.Str(required=True, validate=validate.Length(min=1))
+    first_name = fields.Str(required=False, validate=validate.Length(min=1))
+    last_name = fields.Str(required=False, validate=validate.Length(min=1))
     password = fields.Str(
         load_only=True, required=True, validate=validate.Length(min=6)
     )
-    shipping_address = fields.Str(validate=validate.Length(min=1))
-    shipping_city = fields.Str(validate=validate.Length(min=1))
-    shipping_state = fields.Str(validate=validate.Length(min=1))
-    shipping_zip = fields.Str(validate=validate.Length(min=1))
+    shipping_address = fields.Str(required=False, validate=validate.Length(min=1))
+    shipping_city = fields.Str(required=False, validate=validate.Length(min=1))
+    shipping_state = fields.Str(required=False, validate=validate.Length(min=1))
+    shipping_zip = fields.Str(required=False, validate=validate.Length(min=1))
     orders = fields.Nested("OrderSchema", many=True, exclude=("user",))
 
     def __repr__(self):
@@ -340,7 +391,9 @@ class Login(Resource):
         user = User.query.filter_by(username=username).first()
 
         if user and user.authenticate(password):
-            return make_response({"message": "Login successful"}, 200)
+            return make_response(
+                {"message": "Login successful", "user_id": user.id}, 200
+            )
         else:
             return make_response({"error": "Invalid credentials"}, 401)
 

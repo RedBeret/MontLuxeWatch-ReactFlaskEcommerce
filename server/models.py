@@ -11,7 +11,7 @@ from helpers import (
     validate_positive_number,
     validate_type,
 )
-from sqlalchemy import MetaData
+from sqlalchemy import MetaData, null
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.orm import validates
 from sqlalchemy_serializer import SerializerMixin
@@ -138,13 +138,13 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), unique=True, nullable=False)
     email = db.Column(db.String(255), unique=True, nullable=False)
-    first_name = db.Column(db.String(255), nullable=False)
+    first_name = db.Column(db.String(255), nullable=True)
     last_name = db.Column(db.String(255), nullable=False)
-    _password_hash = db.Column("password_hash", db.String(255))
-    shipping_address = db.Column(db.Text)
-    shipping_city = db.Column(db.String(255))
-    shipping_state = db.Column(db.String(255))
-    shipping_zip = db.Column(db.String(255))
+    _password_hash = db.Column("password_hash", db.String(255), nullable=False)
+    shipping_address = db.Column((db.Text), nullable=False)
+    shipping_city = db.Column(db.String(255), nullable=False)
+    shipping_state = db.Column(db.String(255), nullable=False)
+    shipping_zip = db.Column(db.String(255), nullable=False)
 
     orders = db.relationship("Order", back_populates="user")
 
@@ -165,11 +165,9 @@ class User(db.Model, SerializerMixin):
             raise ValueError("Invalid email address.")
         return email
 
-        # Stronger password validation for future reference
-        # This will ensure the password is at least 8 characters long and contains a mix of letters, numbers, and special characters
-        # if not re.match(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$', password):
-        #     raise ValueError("Password must be at least 8 characters long and include letters, numbers, and special characters.")
-        # return password
+    @validates("username")
+    def validate_username(self, key, username):
+        return validate_not_blank(username, key)
 
     serialize_rules = ("-orders",)
 
