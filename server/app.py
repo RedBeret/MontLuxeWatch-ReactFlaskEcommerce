@@ -208,29 +208,11 @@ class Users(Resource):
         except Exception as error:
             return make_response({"error": str(error)}, 500)
 
-
-# User Schema
-class UserSchema(Schema):
-    id = fields.Int(dump_only=True)
-    username = fields.Str(required=True, validate=validate.Length(min=3))
-    email = fields.Email(required=True)
-    first_name = fields.Str(required=False, validate=validate.Length(min=1))
-    last_name = fields.Str(required=False, validate=validate.Length(min=1))
-    password = fields.Str(
-        load_only=True, required=True, validate=validate.Length(min=6)
-    )
-    shipping_address = fields.Str(required=False, validate=validate.Length(min=1))
-    shipping_city = fields.Str(required=False, validate=validate.Length(min=1))
-    shipping_state = fields.Str(required=False, validate=validate.Length(min=1))
-    shipping_zip = fields.Str(required=False, validate=validate.Length(min=1))
-    orders = fields.Nested("OrderSchema", many=True, exclude=("user",))
-
     def __repr__(self):
         return f"<User {self.username}>"
 
 
 class Orders(Resource):
-    # TESTED ✅
     def get(self):
         try:
             orders = Order.query.all()
@@ -241,6 +223,18 @@ class Orders(Resource):
     # TESTED ✅
     def post(self):
         order_data = request.get_json()
+
+        if "user_id" not in order_data or not order_data.get("order_details"):
+            return make_response({"error": "Missing user_id or order_details"}, 400)
+
+        if not isinstance(order_data["user_id"], int):
+            return make_response({"error": "user_id must be an integer"}, 400)
+        if not isinstance(order_data["order_details"], list) or not all(
+            "product_id" in detail and "quantity" in detail
+            for detail in order_data["order_details"]
+        ):
+            return make_response({"error": "Invalid order_details format"}, 400)
+
         try:
             new_order = Order(user_id=order_data["user_id"])
             db.session.add(new_order)
@@ -273,13 +267,37 @@ class OrderSchema(Schema):
 
 
 class OrderDetails(Resource):
-    # TESTED ✅
+    # Traditional method working
+    # def get(self):
+    #     try:
+    #         order_details = OrderDetail.query.all()
+    #         return make_response([detail.to_dict() for detail in order_details], 200)
+    #     except Exception as error:
+    #         return make_response({"error": str(error)}, 500)
+
+    # Marshmallow method
     def get(self):
         try:
             order_details = OrderDetail.query.all()
-            return make_response([detail.to_dict() for detail in order_details], 200)
+            order_detail_schema = OrderDetailSchema(many=True)
+            return make_response(order_detail_schema.dump(order_details), 200)
         except Exception as error:
             return make_response({"error": str(error)}, 500)
+
+
+# OrderDetail Schema
+class OrderDetailSchema(Schema):
+    id = fields.Int(dump_only=True)
+    order_id = fields.Int(load_only=True, validate=validate.Range(min=1))
+    product_id = fields.Int(required=True, validate=validate.Range(min=1))
+    quantity = fields.Int(required=True, validate=validate.Range(min=1))
+
+    class Meta:
+        model = OrderDetail
+        include_fk = True
+
+    def __repr__(self):
+        return f"<OrderDetail Order: {self.order_id}, Product: {self.product_id}>"
 
 
 class Categories(Resource):
@@ -339,21 +357,6 @@ class ProductCategories(Resource):
             return make_response(
                 {"error": "Failed to create product category: " + str(e)}, 500
             )
-
-
-# OrderDetail Schema
-class OrderDetailSchema(Schema):
-    id = fields.Int(dump_only=True)
-    order_id = fields.Int(load_only=True, validate=validate.Range(min=1))
-    product_id = fields.Int(required=True, validate=validate.Range(min=1))
-    quantity = fields.Int(required=True, validate=validate.Range(min=1))
-
-    class Meta:
-        model = OrderDetail
-        include_fk = True
-
-    def __repr__(self):
-        return f"<OrderDetail Order: {self.order_id}, Product: {self.product_id}>"
 
 
 # This utility function attempts to commit changes to the database but if an error occurs it will roll back the session to avoid leaving the database in an inconsistent state. Then it re-raises the exception to be handled by the caller.
