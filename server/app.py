@@ -151,12 +151,17 @@ class Users(Resource):
             commit_session(db.session)
 
             return make_response({"message": "User created successfully"}, 201)
-        except IntegrityError:
-            return make_response(
-                {"error": "User creation failed due to a database error."},
-                400,
-            )
+        except IntegrityError as e:
+            db.session.rollback()
+            if "UNIQUE constraint failed" in str(e):
+                return make_response(
+                    {"error": "Username or email already exists."}, 409
+                )
+            else:
+                return make_response({"error": "Database integrity error."}, 500)
+
         except Exception as error:
+            db.session.rollback()
             return make_response({"error": "User creation failed: " + str(error)}, 500)
 
     def delete(self):

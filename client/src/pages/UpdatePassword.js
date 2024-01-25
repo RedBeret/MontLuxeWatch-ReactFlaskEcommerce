@@ -128,7 +128,7 @@ export default function UpdatePassword() {
                                     name="confirmNewPassword"
                                     type="password"
                                     placeholder="Confirm New Password"
-                                    className="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm dark-bg-slate-900 dark:border-gray-700 dark:text-gray-400"
+                                    className="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400"
                                 />
                                 <ErrorMessage
                                     name="confirmNewPassword"

@@ -6,7 +6,7 @@ const About = () => {
     return (
         <>
             <section className="overflow-hidden pt-20 pb-12 lg:pt-[120px] lg:pb-[90px] bg-white dark:bg-dark">
-                <div className="container mx-auto">
+                <div className="container mx-auto px-5 lg:px-10">
                     <div className="flex flex-wrap items-center justify-between -mx-4">
                         <div className="w-full px-4 lg:w-6/12">
                             <div className="flex items-center -mx-3 sm:-mx-4">
@@ -613,7 +613,7 @@ const About = () => {
                                 <span className="block mb-4 text-lg font-semibold text-primary">
                                     About Mont Luxe Watch Company
                                 </span>
-                                <h2 className="mb-5 text-3xl font-bold text-dark dark:text-white sm:text-[40px]/[48px]">
+                                <h2 className="mb-5 text-3xl font-bold text-dark dark:text-gray-900 sm:text-[40px]/[48px]">
                                     A Testament to Swiss Excellence
                                 </h2>
                                 <p className="font-normal text-base leading-6 text-gray-600 ">

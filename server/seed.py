@@ -109,7 +109,7 @@ def create_fake_order_details(num_details=10):
         print(f"Error adding order details: {e}")
 
 
-def create_fake_users(num_users=10):
+def create_fake_users(num_users=2):
     for _ in range(num_users):
         try:
             first_name = fake.first_name()

@@ -84,9 +84,14 @@ export default function NavbarMenu() {
                                     >
                                         About
                                     </Link>
+                                    <Link
+                                        to="/contact"
+                                        className="-m-2 block p-2 font-medium text-white"
+                                        onClick={handleCloseMenu}
+                                    >
+                                        Contact
+                                    </Link>
                                 </div>
-
-                                <div className="space-y-6 border-t border-gray-200 px-4 py-6"></div>
 
                                 <div className="space-y-6 border-t border-gray-200 px-4 py-6">
                                     <div className="flow-root">
@@ -169,6 +174,12 @@ export default function NavbarMenu() {
                                     className="flex items-center text-sm font-medium text-white hover:text-gray-300"
                                 >
                                     About
+                                </Link>
+                                <Link
+                                    to="/contact"
+                                    className="flex items-center text-sm font-medium text-white hover:text-gray-300"
+                                >
+                                    Contact
                                 </Link>
                             </div>
 

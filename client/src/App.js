@@ -11,6 +11,7 @@ import Signup from "./pages/Signup";
 import { CartWrapper } from "./components/CartContext";
 import DeleteUser from "./pages/DeleteUser";
 import UpdatePassword from "./pages/UpdatePassword";
+import Contact from "./pages/Contact";
 
 function App() {
     return (
@@ -26,6 +27,7 @@ function App() {
                     <Route path="/deleteuser" component={DeleteUser} />
                     <Route path="/UpdatePassword" component={UpdatePassword} />
                     <Route path="/viewproduct/:id" component={ViewProduct} />
+                    <Route path="/contact" component={Contact} />
                 </Switch>
                 <Footer />
             </Router>

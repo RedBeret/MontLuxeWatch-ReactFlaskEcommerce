@@ -6,7 +6,7 @@ import { Link, useHistory } from "react-router-dom";
 export default function Signup() {
     const history = useHistory();
     const [signupSuccess, setSignupSuccess] = useState("");
-
+    const [signupError, setSignupError] = useState("");
     const initialValues = {
         email: "",
         username: "",
@@ -41,13 +41,15 @@ export default function Signup() {
             });
 
             if (!response.ok) {
-                throw new Error("Signup failed");
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Signup failed");
             }
 
             setSignupSuccess("Sign up successful!");
             setTimeout(() => history.push("/"), 1000);
         } catch (error) {
             console.error("Error during signup:", error);
+            setSignupError(error.message);
         }
 
         setSubmitting(false);
@@ -60,6 +62,11 @@ export default function Signup() {
                     <span className="block sm:inline">{signupSuccess}</span>
                 </div>
             )}{" "}
+            {signupError && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                    <span className="block sm:inline">{signupError}</span>
+                </div>
+            )}
             <div className="mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
                 <div className="p-4 sm:p-7">
                     <div className="text-center">
