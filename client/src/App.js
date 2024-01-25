@@ -9,33 +9,27 @@ import Checkout from "./pages/Checkout";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import { CartWrapper } from "./components/CartContext";
-import { UserWrapper } from "./components/UserContext";
 import DeleteUser from "./pages/DeleteUser";
 import UpdatePassword from "./pages/UpdatePassword";
 
 function App() {
     return (
-        <UserWrapper>
-            <CartWrapper>
-                <Router>
-                    <NavbarMenu />
-                    <Switch>
-                        <Route exact path="/" component={Home} />
-                        <Route path="/about" component={About} />
-                        <Route path="/checkout" component={Checkout} />
-                        <Route path="/login" component={Login} />
-                        <Route path="/signup" component={Signup} />
-                        <Route path="/deleteuser" component={DeleteUser} />
-                        <Route path="/UpdatePassword" component={UpdatePassword} />
-                        <Route
-                            path="/viewproduct/:id"
-                            component={ViewProduct}
-                        />
-                    </Switch>
-                    <Footer />
-                </Router>
-            </CartWrapper>
-        </UserWrapper>
+        <CartWrapper>
+            <Router>
+                <NavbarMenu />
+                <Switch>
+                    <Route exact path="/" component={Home} />
+                    <Route path="/about" component={About} />
+                    <Route path="/checkout" component={Checkout} />
+                    <Route path="/login" component={Login} />
+                    <Route path="/signup" component={Signup} />
+                    <Route path="/deleteuser" component={DeleteUser} />
+                    <Route path="/UpdatePassword" component={UpdatePassword} />
+                    <Route path="/viewproduct/:id" component={ViewProduct} />
+                </Switch>
+                <Footer />
+            </Router>
+        </CartWrapper>
     );
 }
 

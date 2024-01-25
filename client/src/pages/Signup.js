@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Link, useHistory } from "react-router-dom";
-import { useUserContext } from "../components/UserContext";
 
 export default function Signup() {
     const history = useHistory();
-    const { login } = useUserContext();
+    const [signupSuccess, setSignupSuccess] = useState("");
 
     const initialValues = {
         email: "",
@@ -45,10 +44,8 @@ export default function Signup() {
                 throw new Error("Signup failed");
             }
 
-            // Update the context and redirect with alert
-            login({ username, email });
-            history.push("/");
-            alert("You are now logged in!");
+            setSignupSuccess("Sign up successful!");
+            setTimeout(() => history.push("/"), 1000);
         } catch (error) {
             console.error("Error during signup:", error);
         }
@@ -58,6 +55,11 @@ export default function Signup() {
 
     return (
         <main className="w-full max-w-md mx-auto p-6">
+            {signupSuccess && (
+                <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+                    <span className="block sm:inline">{signupSuccess}</span>
+                </div>
+            )}{" "}
             <div className="mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-gray-800 dark:border-gray-700">
                 <div className="p-4 sm:p-7">
                     <div className="text-center">

@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Link, useHistory } from "react-router-dom";
-import { useUserContext } from "../components/UserContext.js";
 
 export default function Login() {
     const history = useHistory();
-    const { login } = useUserContext();
     const [loginError, setLoginError] = useState("");
     const [loginSuccess, setLoginSuccess] = useState("");
 
@@ -35,11 +33,8 @@ export default function Login() {
                 throw new Error(errorData.error || "Login failed");
             }
 
-            const userDetails = await response.json();
-            login(userDetails);
-            history.push("/");
-            alert("You are now logged in!");
             setLoginSuccess("Login successful!");
+            setTimeout(() => history.push("/"), 1000);
         } catch (error) {
             console.error("Error during login:", error);
             setErrors({ server: error.message });

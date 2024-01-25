@@ -2,8 +2,10 @@
 # app.py
 # here we will have route definitions and logic for our API
 
-# Standard library imports
 import os
+
+# Standard library imports
+from email.headerregistry import HeaderRegistry
 
 # Remote library imports
 # Local imports
@@ -157,33 +159,47 @@ class Users(Resource):
         except Exception as error:
             return make_response({"error": "User creation failed: " + str(error)}, 500)
 
-
-class UserByID(Resource):
-    def delete(self, id):
+    def delete(self):
         try:
-            user = User.query.get(id)
-            if not user:
-                return make_response({"error": "User not found"}, 404)
+            data = request.get_json()
+            if not all(key in data for key in ("username", "password")):
+                return make_response(
+                    {"error": "Username and password are required"}, 400
+                )
 
-            db.session.delete(user)
-            commit_session(db.session)
-            return make_response({"message": "User deleted successfully"}, 200)
+            username = data["username"]
+            password = data["password"]
+
+            user = User.query.filter_by(username=username).first()
+
+            if user and user.authenticate(password):
+                user_to_delete = user
+                db.session.delete(user_to_delete)
+                commit_session(db.session)
+                return make_response({"message": "User deleted successfully"}, 200)
+            else:
+                return make_response({"error": "Invalid credentials"}, 401)
         except Exception as error:
             return make_response({"error": str(error)}, 500)
 
-    def patch(self, id):
-        UserInfo = request.get_json()
+    def patch(self):
+        data = request.get_json()
         try:
-            user = User.query.get(id)
-            if not user:
-                return make_response({"error": "User not found"}, 404)
+            if not all(key in data for key in ("username", "password", "newPassword")):
+                return make_response({"error": "Required fields are missing"}, 400)
 
-            if "password" in UserInfo:
-                user.password = UserInfo["password"]
+            username = data["username"]
+            password = data["password"]
+            new_password = data["newPassword"]
+
+            user = User.query.filter_by(username=username).first()
+
+            if user and user.authenticate(password):
+                user.password = new_password
                 commit_session(db.session)
                 return make_response({"message": "Password updated successfully"}, 200)
-
-            return make_response({"error": "No update to User Info provided"}, 400)
+            else:
+                return make_response({"error": "Invalid credentials"}, 401)
         except Exception as error:
             return make_response({"error": str(error)}, 500)
 
@@ -385,7 +401,6 @@ api.add_resource(ProductByID, "/products/<int:id>")
 api.add_resource(Login, "/login")
 api.add_resource(Categories, "/categories")
 api.add_resource(ProductCategories, "/product_categories")
-api.add_resource(UserByID, "/users/<int:id>")
 
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
