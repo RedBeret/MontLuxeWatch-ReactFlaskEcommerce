@@ -1,8 +1,8 @@
 """initial migration
 
-Revision ID: fa0a5088be40
+Revision ID: da91ed99a03c
 Revises: 
-Create Date: 2024-01-23 17:06:30.540611
+Create Date: 2024-01-25 15:59:31.127041
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'fa0a5088be40'
+revision = 'da91ed99a03c'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -38,13 +38,13 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=255), nullable=False),
     sa.Column('email', sa.String(length=255), nullable=False),
-    sa.Column('first_name', sa.String(length=255), nullable=False),
+    sa.Column('first_name', sa.String(length=255), nullable=True),
     sa.Column('last_name', sa.String(length=255), nullable=False),
-    sa.Column('password_hash', sa.String(length=255), nullable=True),
-    sa.Column('shipping_address', sa.Text(), nullable=True),
-    sa.Column('shipping_city', sa.String(length=255), nullable=True),
-    sa.Column('shipping_state', sa.String(length=255), nullable=True),
-    sa.Column('shipping_zip', sa.String(length=255), nullable=True),
+    sa.Column('password_hash', sa.String(length=255), nullable=False),
+    sa.Column('shipping_address', sa.Text(), nullable=False),
+    sa.Column('shipping_city', sa.String(length=255), nullable=False),
+    sa.Column('shipping_state', sa.String(length=255), nullable=False),
+    sa.Column('shipping_zip', sa.String(length=255), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')

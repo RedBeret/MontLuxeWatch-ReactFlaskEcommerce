@@ -124,6 +124,13 @@ class ProductCategory(db.Model, SerializerMixin):
         value = validate_type(value, key, int)
         if value is None:
             raise ValueError(f"{key} must not be null.")
+
+        if key == "product_id" and not db.session.get(Product, value):
+            raise ValueError(f"Product with id {value} does not exist.")
+
+        if key == "category_id" and not db.session.get(Category, value):
+            raise ValueError(f"Category with id {value} does not exist.")
+
         return value
 
     def __repr__(self):
@@ -169,6 +176,19 @@ class User(db.Model, SerializerMixin):
     def validate_username(self, key, username):
         return validate_not_blank(username, key)
 
+    @validates(
+        "first_name",
+        "last_name",
+        "shipping_address",
+        "shipping_city",
+        "shipping_state",
+        "shipping_zip",
+    )
+    def validate_optional_fields(self, key, field_value):
+        if field_value:
+            return validate_not_blank(field_value, key)
+        return field_value
+
     serialize_rules = ("-orders",)
 
 
@@ -181,6 +201,12 @@ class Order(db.Model, SerializerMixin):
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     order_details = db.relationship("OrderDetail", back_populates="order")
     user = db.relationship("User", back_populates="orders")
+
+    @validates("user_id")
+    def validate_user_id(self, _, user_id):
+        if not User.query.get(user_id):
+            raise ValueError(f"There is no user with id {user_id}")
+        return user_id
 
 
 # OrderDetail Model
@@ -198,3 +224,9 @@ class OrderDetail(db.Model, SerializerMixin):
         "-order",
         "-product",
     )
+
+    @validates("product_id")
+    def validate_product_id(self, _, product_id):
+        if not Product.query.get(product_id):
+            raise ValueError(f"There is no product with id {product_id}")
+        return product_id

@@ -36,7 +36,6 @@ class Products(Resource):
     # TESTED ✅
     def get(self):
         try:
-            products = [product.to_dict() for product in Product.query.all()]
             products = [
                 product.to_dict(convert_price_to_dollars=True)
                 for product in Product.query.all()
