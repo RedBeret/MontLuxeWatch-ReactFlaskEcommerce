@@ -4,7 +4,7 @@
 
 Disclaimer: Please note that the Mont Luxe Watch Company E-Commerce Platform is a conceptual project created for educational purposes. This store, including its products and services, does not exist in reality and has been developed as a part of a learning endeavor in full-stack web application development.
 
-The Mont Luxe Watch Company E-Commerce Platform represents a pinnacle in web application development, designed to elegantly showcase and facilitate the sale of luxury timepieces. 
+The Mont Luxe Watch Company E-Commerce Platform represents a sophisticated elegance in web application development, designed to elegantly showcase and facilitate the sale of luxury timepieces. Technologies used and learned are below, this flows up to the checkout page has CRUD on Users with bcrypt on the hashed passwords utilizing frontend and backend full stack Python, Flask, SQlite3, SQL Alchemy, React JS, and Tailwind CSS. 
 
 Key Technologies and Features:
 1. **Flask Backend**: Utilizes the Flask framework for robust server-side operations, ensuring efficient handling of HTTP requests, data processing, and API interactions.
@@ -16,6 +16,15 @@ Key Technologies and Features:
 7. **User Authentication and Management**: Features a comprehensive user authentication system, supporting secure user registration, login, and profile management.
 8. **Interactive Shopping Cart**: Implements an interactive shopping cart system, allowing users to seamlessly add items, adjust quantities, and proceed to checkout.
 10. **Python Validations**: Employs Python for backend data validation, ensuring robust error handling and data integrity.
+
+## Technology Stack
+
+- **Frontend**: React, Tailwind CSS, Formik, Yup (for form validation).
+- **Backend**: Flask, Flask-RESTful, Flask-SQLAlchemy, Flask-Migrate.
+- **Database**: SQLite.
+- **Version Control**: Git, GitHub
+- **Testing and Debugging**: Postman, Insomnia
+- **Additional Tools**: HeadlessUI, Heroicons, Faker
 
 ### Objectives and Learning Outcomes
 
@@ -32,15 +41,6 @@ Key Technologies and Features:
 - **Shopping Cart**: Allows users to add products to a cart and manage quantities.
 - **Checkout Process**: Facilitates the collection of shipping details and processes orders.
 - **Responsive Design**: Ensures a seamless experience across various devices and screen sizes.
-
-## Technology Stack
-
-- **Frontend**: React, Tailwind CSS, Formik, Yup (for form validation).
-- **Backend**: Flask, Flask-RESTful, Flask-SQLAlchemy, Flask-Migrate.
-- **Database**: SQLite.
-- **Additional Tools**: HeadlessUI, Heroicons, Faker
-- **Version Control**: Git, GitHub
-- **Testing and Debugging**: Postman, Insomnia
 
 ## Directory Structure
 
