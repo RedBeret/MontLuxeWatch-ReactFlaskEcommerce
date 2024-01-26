@@ -1,357 +1,181 @@
-# Phase 4 Full-Stack Application Project Template
+# Mont Luxe Watch Company E-Commerce Platform
 
-## Learning Goals
+## Project Overview
 
-- Discuss the basic directory structure of a full-stack Flask/React application.
-- Carry out the first steps in creating your Phase 4 project.
+Disclaimer: Please note that the Mont Luxe Watch Company E-Commerce Platform is a conceptual project created for educational purposes. This store, including its products and services, does not exist in reality and has been developed as a part of a learning endeavor in full-stack web application development.
 
----
+The Mont Luxe Watch Company E-Commerce Platform represents a pinnacle in web application development, designed to elegantly showcase and facilitate the sale of luxury timepieces. This project stands as a testament to the seamless integration of cutting-edge technologies and best practices in full-stack development.
 
-## Introduction
+Key Technologies and Features:
+1. **Flask Backend**: Utilizes the Flask framework for robust server-side operations, ensuring efficient handling of HTTP requests, data processing, and API interactions.
+2. **React Frontend**: Employs React to create a dynamic and responsive user interface, offering an immersive and intuitive experience for browsing and purchasing luxury watches.
+3. **SQLite Database**: Implements SQLite for reliable and scalable data storage, managing product inventories, user data, and transactional information with precision.
+4. **Bcrypt for Security**: Incorporates Flask-Bcrypt for advanced security measures, specifically in hashing and securing user passwords.
+5. **Marshmallow for Serialization**: Utilizes Marshmallow for object serialization and deserialization, enhancing data integrity between the backend and frontend.
+6. **Responsive and Elegant Design**: Tailwind CSS is integrated to provide a visually appealing, mobile-responsive design, aligning with the luxurious essence of the product line.
+7. **User Authentication and Management**: Features a comprehensive user authentication system, supporting secure user registration, login, and profile management.
+8. **Interactive Shopping Cart**: Implements an interactive shopping cart system, allowing users to seamlessly add items, adjust quantities, and proceed to checkout.
+10. **Python Validations**: Employs Python for backend data validation, ensuring robust error handling and data integrity.
 
-Fork and clone this lesson for a template for your full-stack application. Take
-a look at the directory structure before we begin (NOTE: node_modules will be
-generated in a subsequent step):
+### Objectives and Learning Outcomes
 
-```console
-$ tree -L 2
-$ # the -L argument limits the depth at which we look into the directory structure
-.
-├── CONTRIBUTING.md
-├── LICENSE.md
+1. **Hands-On Experience**: Gain practical experience in building a full-stack application.
+2. **Technology Integration**: Learn to integrate various technologies like Flask, React, and SQLite.
+3. **Database Management**: Understand the intricacies of managing a database in a dynamic website.
+4. **Frontend Development**: Enhance skills in frontend development using React and various libraries.
+5. **Backend Development**: Develop backend proficiency with Flask and RESTful API design.
+
+## Key Features
+
+- **Product Display**: Showcases luxury watches with detailed descriptions and high-quality images.
+- **User Authentication**: Secure login, sign-up, and account management functionalities.
+- **Shopping Cart**: Allows users to add products to a cart and manage quantities.
+- **Checkout Process**: Facilitates the collection of shipping details and processes orders.
+- **Responsive Design**: Ensures a seamless experience across various devices and screen sizes.
+
+## Technology Stack
+
+- **Frontend**: React, Tailwind CSS, Formik, Yup (for form validation).
+- **Backend**: Flask, Flask-RESTful, Flask-SQLAlchemy, Flask-Migrate.
+- **Database**: SQLite.
+- **Additional Tools**: HeadlessUI, Heroicons, Faker
+- **Version Control**: Git, GitHub
+- **Testing and Debugging**: Postman, Insomnia
+
+## Directory Structure
+
+```
 ├── Pipfile
 ├── README.md
 ├── client
 │   ├── README.md
+│   ├── package-lock.json
 │   ├── package.json
 │   ├── public
-│   └── src
+│   ├── src
+│   │   ├── App.js
+│   │   ├── assets
+│   │   │   └── img
+│   │   ├── components
+│   │   │   ├── CartContext.js
+│   │   │   ├── Footer.js
+│   │   │   ├── Hero.js
+│   │   │   ├── InfoSection.js
+│   │   │   ├── NavbarMenu.js
+│   │   │   ├── Products.js
+│   │   │   └── ShoppingCart.js
+│   │   ├── index.css
+│   │   ├── index.js
+│   │   └── pages
+│   │       ├── About.js
+│   │       ├── Checkout.js
+│   │       ├── Contact.js
+│   │       ├── DeleteUser.js
+│   │       ├── Home.js
+│   │       ├── Login.js
+│   │       ├── Signup.js
+│   │       ├── UpdatePassword.js
+│   │       └── ViewProduct.js
+│   └── tailwind.config.js
 └── server
     ├── app.py
     ├── config.py
+    ├── helpers.py
+    ├── migrations
     ├── models.py
     └── seed.py
 ```
 
-A `migrations` folder will be added to the `server` directory in a later step.
+## Lessons Learned
 
-The `client` folder contains a basic React application, while the `server`
-folder contains a basic Flask application. You will adapt both folders to
-implement the code for your project .
+1. **Full-Stack Integration**: Learned how to seamlessly integrate frontend and backend components into a cohesive application.
+2. **Database Handling**: Gained experience in designing and managing a database with SQLite and SQLAlchemy.
+3. **User Interface Design**: Developed skills in crafting intuitive and responsive user interfaces with React and Tailwind CSS.
+4. **Security and Authentication**: Implemented secure user authentication.
+5. **API Development**: Created and utilized RESTful APIs for data interaction between frontend and backend.
 
-NOTE: If you did not previously install `tree` in your environment setup, MacOS
-users can install this with the command `brew install tree`. WSL and Linux users
-can run `sudo apt-get install tree` to download it as well.
+## Future Enhancements
 
-## Where Do I Start?
+1. **Payment Integration and Security**: Implement a secure payment gateway with multiple payment options, and enhance user security with robust authentication and authorization features.
+2. **User Experience Improvements**: Develop advanced product filtering and search capabilities, and introduce customer reviews and ratings for products.
+3. **Session Persistence and Database Optimization**: Utilize cookies for persistent user sessions and optimize the database by separating user and shipping data for efficiency.
+4. **Post-Checkout Process Enhancement**: Enhance user engagement with features like order confirmation, order tracking, and an accessible order history for logged-in users.
 
-Just as with your Phase 3 Project, this will likely be one of the biggest
-projects you've undertaken so far. Your first task should be creating a Git
-repository to keep track of your work and roll back any undesired changes.
+## Conclusion
 
-### Removing Existing Git Configuration
+The Mont Luxe Watch E-Commerce Platform is a prime example of effective web development. This project highlights key aspects:
 
-If you're using this template, start off by removing the existing metadata for
-Github and Canvas. Run the following command to carry this out:
+- Full-stack development: Integrating Flask, React, and SQLite for a seamless user experience.
+- Database management: Efficient handling of data for product display and transactions.
+- User Interface: A focus on design and functionality, enhancing user interaction.
 
-```console
-$ rm -rf .git .canvas
-```
+It's more than just an e-commerce site; it's a showcase of learning and skill application in web development. If you would like to try it follow the steps below.
 
-The `rm` command removes files from your computer's memory. The `-r` flag tells
-the console to remove _recursively_, which allows the command to remove
-directories and the files within them. `-f` removes them permanently.
 
-`.git` contains this directory's configuration to track changes and push to
-Github (you want to track and push _your own_ changes instead), and `.canvas`
-contains the metadata to create a Canvas page from your Git repo. You don't have
-the permissions to edit our Canvas course, so it's not worth keeping around.
+# Mont Luxe Watch Company E-Commerce Platform Setup Guide
 
-### Creating Your Own Git Repo
+## Preparing the Backend Environment (`server/`)
+Before initializing the database, ensure you have a `.env` file set up in your `server` directory. This file will store environment variables essential for your Flask application.
 
-First things first- rename this directory! Once you have an idea for a name,
-move one level up with `cd ..` and run
-`mv python-p4-project-template <new-directory-name>` to change its name (replace
-<new-directory-name> with an appropriate project directory name).
+### Generating a Secret Key
+1. To generate a secret key for Flask, use a Python shell and the following command:
+    ```python
+    import os
+    os.urandom(24)
+    ```
+2. This command will output a secret key. Copy this key.
 
-> **Note: If you typed the `mv` command in a terminal within VS Code, you should
-> close VS Code then reopen it.**
+### Creating the .env File
+1. In your `server` directory, create a file named `.env`.
+2. Add the following lines to the `.env` file:
+    ```
+    SECRET_KEY=<Your Secret Key>
+    DB_URI="sqlite:///app.db"
+    ```
+   Replace `<Your Secret Key>` with the secret key you generated earlier.
 
-> **Note: `mv` actually stands for "move", but your computer interprets this
-> rename as a move from a directory with the old name to a directory with a new
-> name.**
-
-`cd` back into your new directory and run `git init` to create a local git
-repository. Add all of your local files to version control with `git add --all`,
-then commit them with `git commit -m'initial commit'`. (You can change the
-message here- this one is just a common choice.)
-
-Navigate to [GitHub](https://github.com). In the upper-right corner of the page,
-click on the "+" dropdown menu, then select "New repository". Enter the name of
-your local repo, choose whether you would like it to be public or private, make
-sure "Initialize this repository with a README" is unchecked (you already have
-one), then click "Create repository".
-
-Head back to the command line and enter
-`git remote add origin git@github.com:github-username/new-repository-name.git`.
-NOTE: Replace `github-username` with your github username, and
-`new-repository-name` with the name of your new repository. This command will
-map the remote repository to your local repository. Finally, push your first
-commit with `git push -u origin main`.
-
-Your project is now version-controlled locally and online. This will allow you
-to create different versions of your project and pick up your work on a
-different machine if the need arises.
-
----
-
-## Setup
-
-### `server/`
-
-The `server/` directory contains all of your backend code.
-
-`app.py` is your Flask application. You'll want to use Flask to build a simple
-API backend like we have in previous modules. You should use Flask-RESTful for
-your routes. You should be familiar with `models.py` and `seed.py` by now, but
-remember that you will need to use Flask-SQLAlchemy, Flask-Migrate, and
-SQLAlchemy-Serializer instead of SQLAlchemy and Alembic in your models.
-
-The project contains a default `Pipfile` with some basic dependencies. You may
-adapt the `Pipfile` if there are additional dependencies you want to add for
-your project.
-
-To download the dependencies for the backend server, run:
-
+### Installing Dependencies
+To install backend dependencies and activate the virtual environment, run:
 ```console
 pipenv install
 pipenv shell
 ```
 
-You can run your Flask API on [`localhost:5555`](http://localhost:5555) by
-running:
-
+### Running the Flask API
+You can run the Flask API on `localhost:5555` by executing:
 ```console
 python server/app.py
 ```
 
-Check that your server serves the default route `http://localhost:5555`. You
-should see a web page with the heading "Project Server".
+## Preparing the Frontend Environment (`client/`)
+The `client/` directory contains your React frontend code.
 
-### `client/`
-
-The `client/` directory contains all of your frontend code. The file
-`package.json` has been configured with common React application dependencies,
-include `react-router-dom`. The file also sets the `proxy` field to forward
-requests to `"http://localhost:5555". Feel free to change this to another port-
-just remember to configure your Flask app to use another port as well!
-
-To download the dependencies for the frontend client, run:
-
+### Installing React Dependencies
+To install frontend dependencies, run:
 ```console
 npm install --prefix client
 ```
 
-You can run your React app on [`localhost:3000`](http://localhost:3000) by
-running:
-
+### Starting the React App
+To start the React app on `localhost:3000`, execute:
 ```sh
 npm start --prefix client
 ```
 
-Check that your the React client displays a default page
-`http://localhost:3000`. You should see a web page with the heading "Project
-Client".
+## Database Initialization and Seeding
+After setting up your `.env` file and installing dependencies, you can initialize and seed your database. Ensure you're in the `server` directory, then run the following commands, you can copy and paste all of them if you are in cd Server:
 
-## Generating Your Database
+```sh
+export FLASK_APP=app.py
+export FLASK_RUN_PORT=5555
 
-NOTE: The initial project directory structure does not contain the `instance` or
-`migrations` folders. Change into the `server` directory:
-
-```console
-cd server
+{ flask db init && echo "DB init successful"; } || echo "DB init failed, continuing..."
+{ flask db migrate -m "initial migration" && echo "DB migrate successful"; } || echo "DB migrate failed, continuing..."
+{ flask db upgrade head && echo "DB upgrade successful"; } || echo "DB upgrade failed, continuing..."
+{ python seed.py && echo "Seeding successful"; } || echo "Seeding failed"
 ```
 
-Then enter the commands to create the `instance` and `migrations` folders and
-the database `app.db` file:
+These commands will initialize the database, perform migrations, upgrade the database to the latest version, and seed it with initial data.
 
-```
-flask db init
-flask db upgrade head
-```
-
-Type `tree -L 2` within the `server` folder to confirm the new directory
-structure:
-
-```console
-.
-├── app.py
-├── config.py
-├── instance
-│   └── app.db
-├── migrations
-│   ├── README
-│   ├── __pycache__
-│   ├── alembic.ini
-│   ├── env.py
-│   ├── script.py.mako
-│   └── versions
-├── models.py
-└── seed.py
-```
-
-Edit `models.py` and start creating your models. Import your models as needed in
-other modules, i.e. `from models import ...`.
-
-Remember to regularly run
-`flask db revision --autogenerate -m'<descriptive message>'`, replacing
-`<descriptive message>` with an appropriate message, and `flask db upgrade head`
-to track your modifications to the database and create checkpoints in case you
-ever need to roll those modifications back.
-
-> **Tip: It's always a good idea to start with an empty revision! This allows
-> you to roll all the way back while still holding onto your database. You can
-> create this empty revision with `flask db revision -m'Create DB'`.**
-
-If you want to seed your database, now would be a great time to write out your
-`seed.py` script and run it to generate some test data. Faker has been included
-in the Pipfile if you'd like to use that library.
 
 ---
-
-#### `config.py`
-
-When developing a large Python application, you might run into a common issue:
-_circular imports_. A circular import occurs when two modules import from one
-another, such as `app.py` and `models.py`. When you create a circular import and
-attempt to run your app, you'll see the following error:
-
-```console
-ImportError: cannot import name
-```
-
-If you're going to need an object in multiple modules like `app` or `db`,
-creating a _third_ module to instantiate these objects can save you a great deal
-of circular grief. Here's a good start to a Flask config file (you may need more
-if you intend to include features like authentication and passwords):
-
-```py
-# Standard library imports
-
-# Remote library imports
-from flask import Flask
-from flask_cors import CORS
-from flask_migrate import Migrate
-from flask_restful import Api
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import MetaData
-
-# Local imports
-
-# Instantiate app, set attributes
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.json.compact = False
-
-# Define metadata, instantiate db
-metadata = MetaData(naming_convention={
-    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-})
-db = SQLAlchemy(metadata=metadata)
-migrate = Migrate(app, db)
-db.init_app(app)
-
-# Instantiate REST API
-api = Api(app)
-
-# Instantiate CORS
-CORS(app)
-
-```
-
-Now let's review that last line...
-
-#### CORS
-
-CORS (Cross-Origin Resource Sharing) is a system that uses HTTP headers to
-determine whether resources from different servers-of-origin can be accessed. If
-you're using the fetch API to connect your frontend to your Flask backend, you
-need to configure CORS on your Flask application instance. Lucky for us, that
-only takes one line:
-
-```py
-CORS(app)
-
-```
-
-By default, Flask-CORS enables CORS on all routes in your application with all
-fetching servers. You can also specify the resources that allow CORS. The
-following specifies that routes beginning with `api/` allow CORS from any
-originating server:
-
-```py
-CORS(app, resources={r"/api/*": {"origins": "*"}})
-
-```
-
-You can also set this up resource-by-resource by importing and using the
-`@cross_origin` decorator:
-
-```py
-@app.route("/")
-@cross_origin()
-def howdy():
-  return "Howdy partner!"
-
-```
-
----
-
-## Updating Your README.md
-
-`README.md` is a Markdown file that describes your project. These files can be
-used in many different ways- you may have noticed that we use them to generate
-entire Canvas lessons- but they're most commonly used as homepages for online
-Git repositories. **When you develop something that you want other people to
-use, you need to have a README.**
-
-Markdown is not a language that we cover in Flatiron's Software Engineering
-curriculum, but it's not a particularly difficult language to learn (if you've
-ever left a comment on Reddit, you might already know the basics). Refer to the
-cheat sheet in this lesson's resources for a basic guide to Markdown.
-
-### What Goes into a README?
-
-This README should serve as a template for your own- go through the important
-files in your project and describe what they do. Each file that you edit (you
-can ignore your migration files) should get at least a paragraph. Each function
-should get a small blurb.
-
-You should descibe your application first, and with a good level of detail. The
-rest should be ordered by importance to the user. (Probably routes next, then
-models.)
-
-Screenshots and links to resources that you used throughout are also useful to
-users and collaborators, but a little more syntactically complicated. Only add
-these in if you're feeling comfortable with Markdown.
-
----
-
-## Conclusion
-
-A lot of work goes into a full-stack application, but it all relies on concepts
-that you've practiced thoroughly throughout this phase. Hopefully this template
-and guide will get you off to a good start with your Phase 4 Project.
-
-Happy coding!
-
----
-
-## Resources
-
-- [Setting up a respository - Atlassian](https://www.atlassian.com/git/tutorials/setting-up-a-repository)
-- [Create a repo- GitHub Docs](https://docs.github.com/en/get-started/quickstart/create-a-repo)
-- [Markdown Cheat Sheet](https://www.markdownguide.org/cheat-sheet/)
-- [Python Circular Imports - StackAbuse](https://stackabuse.com/python-circular-imports/)
-- [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/)
