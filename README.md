@@ -114,16 +114,18 @@ It's more than just an e-commerce site; it's a showcase of learning and skill ap
 
 # Mont Luxe Watch Company E-Commerce Platform Setup Guide
 
-## Preparing the Backend Environment (`server/`)
-Before initializing the database, ensure you have a `.env` file set up in your `server` directory. This file will store environment variables essential for your Flask application.
+Welcome to the Mont Luxe Watch Company E-Commerce Platform. This guide will walk you through the steps to set up your development environment for both the backend (Flask) and frontend (React) components of the application.
 
-### Generating a Secret Key
-1. To generate a secret key for Flask, use a Python shell and the following command:
-    ```python
-    import os
-    os.urandom(24)
+## Preparing the Backend Environment (`server/`)
+Before initializing the database, ensure you have a `.env` file set up in your `server` directory. This file will store essential environment variables for your Flask application.
+
+### Generating the Secret Key
+1. Open a terminal.
+2. Generate a new secret key by running the following command:
+    ```console
+    python -c 'import secrets; print(secrets.token_hex())'
     ```
-2. This command will output a secret key. Copy this key.
+3. Copy the output; this is your secret key.
 
 ### Creating the .env File
 1. In your `server` directory, create a file named `.env`.
@@ -132,38 +134,38 @@ Before initializing the database, ensure you have a `.env` file set up in your `
     SECRET_KEY=<Your Secret Key>
     DB_URI="sqlite:///app.db"
     ```
-   Replace `<Your Secret Key>` with the secret key you generated earlier.
+   Replace `<Your Secret Key>` with the key you generated.
 
 ### Installing Dependencies
-To install backend dependencies and activate the virtual environment, run:
+After cloning the project, install backend dependencies and activate the virtual environment:
 ```console
 pipenv install
 pipenv shell
 ```
 
 ### Running the Flask API
-You can run the Flask API on `localhost:5555` by executing:
+To run the Flask API locally (default port 5555):
 ```console
 python server/app.py
 ```
 
 ## Preparing the Frontend Environment (`client/`)
-The `client/` directory contains your React frontend code.
+The `client/` directory contains the React frontend code.
 
 ### Installing React Dependencies
-To install frontend dependencies, run:
+To install frontend dependencies:
 ```console
 npm install --prefix client
 ```
 
 ### Starting the React App
-To start the React app on `localhost:3000`, execute:
-```sh
+To start the React app locally (default port 3000):
+```console
 npm start --prefix client
 ```
 
 ## Database Initialization and Seeding
-After setting up your `.env` file and installing dependencies, you can initialize and seed your database. Ensure you're in the `server` directory, then run the following commands, you can copy and paste all of them if you are in cd Server:
+After setting up your `.env` file and installing dependencies, you can initialize and seed your database. Ensure you're in the `server` directory, then run:
 
 ```sh
 export FLASK_APP=app.py
@@ -175,7 +177,5 @@ export FLASK_RUN_PORT=5555
 { python seed.py && echo "Seeding successful"; } || echo "Seeding failed"
 ```
 
-These commands will initialize the database, perform migrations, upgrade the database to the latest version, and seed it with initial data.
+These commands will initialize the database, perform migrations, upgrade to the latest version, and seed it with initial data. After this you should see it on your http://localhost:3000/ enjoy! ☺️
 
-
----
