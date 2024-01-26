@@ -4,7 +4,7 @@
 
 Disclaimer: Please note that the Mont Luxe Watch Company E-Commerce Platform is a conceptual project created for educational purposes. This store, including its products and services, does not exist in reality and has been developed as a part of a learning endeavor in full-stack web application development.
 
-The Mont Luxe Watch Company E-Commerce Platform represents a pinnacle in web application development, designed to elegantly showcase and facilitate the sale of luxury timepieces. This project stands as a testament to the seamless integration of cutting-edge technologies and best practices in full-stack development.
+The Mont Luxe Watch Company E-Commerce Platform represents a pinnacle in web application development, designed to elegantly showcase and facilitate the sale of luxury timepieces. 
 
 Key Technologies and Features:
 1. **Flask Backend**: Utilizes the Flask framework for robust server-side operations, ensuring efficient handling of HTTP requests, data processing, and API interactions.
