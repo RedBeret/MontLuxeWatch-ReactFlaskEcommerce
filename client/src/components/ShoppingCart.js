@@ -4,9 +4,11 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { useCartContext } from "../components/CartContext";
 
+// ShoppingCart component: Manages the display and interactions of the shopping cart
 export default function ShoppingCart({ open, setOpen }) {
     const { cartItems, updateQuantity, removeFromCart } = useCartContext();
 
+    // calculateTotal: Computes the total price of items in the cart
     const calculateTotal = () => {
         return cartItems
             .reduce((total, item) => total + item.price * item.quantity, 0)
@@ -14,6 +16,7 @@ export default function ShoppingCart({ open, setOpen }) {
     };
 
     return (
+        // Transition.Root: Handles the opening and closing animations of the cart
         <Transition.Root show={open} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={setOpen}>
                 <Transition.Child
@@ -25,11 +28,13 @@ export default function ShoppingCart({ open, setOpen }) {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
+                    {/* Overlay background */}
                     <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
                 </Transition.Child>
-
+                {/* Main container of the cart */}
                 <div className="fixed inset-0 overflow-hidden">
                     <div className="absolute inset-0 overflow-hidden">
+                        {/* Panel animation container */}
                         <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
                             <Transition.Child
                                 as={Fragment}
@@ -40,6 +45,7 @@ export default function ShoppingCart({ open, setOpen }) {
                                 leaveFrom="translate-x-0"
                                 leaveTo="translate-x-full"
                             >
+                                {/* Dialog.Panel: Container for the cart items and checkout details */}
                                 <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
                                     <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                                         <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
@@ -47,6 +53,7 @@ export default function ShoppingCart({ open, setOpen }) {
                                                 <Dialog.Title className="text-lg font-medium text-gray-900">
                                                     Shopping cart
                                                 </Dialog.Title>
+                                                {/* Close button */}
                                                 <div className="ml-3 flex h-7 items-center">
                                                     <button
                                                         type="button"
@@ -65,13 +72,14 @@ export default function ShoppingCart({ open, setOpen }) {
                                                     </button>
                                                 </div>
                                             </div>
-
+                                            {/* Cart items list */}
                                             <div className="mt-8">
                                                 <div className="flow-root">
                                                     <ul
                                                         role="list"
                                                         className="-my-6 divide-y divide-gray-200"
                                                     >
+                                                        {/* Mapping through cart items */}
                                                         {cartItems.map(
                                                             (product) => (
                                                                 <li
@@ -80,6 +88,7 @@ export default function ShoppingCart({ open, setOpen }) {
                                                                     }
                                                                     className="flex py-6"
                                                                 >
+                                                                    {/* Product image */}
                                                                     <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                                                         <img
                                                                             src={`/assets/${product.image_url}`}
@@ -89,8 +98,10 @@ export default function ShoppingCart({ open, setOpen }) {
                                                                             className="h-full w-full object-cover object-center"
                                                                         />
                                                                     </div>
+                                                                    {/* Product details */}
                                                                     <div className="ml-4 flex flex-1 flex-col">
                                                                         <div>
+                                                                            {/* Product name and price */}
                                                                             <div className="flex justify-between text-base font-medium text-gray-900">
                                                                                 <h3>
                                                                                     {
@@ -144,6 +155,7 @@ export default function ShoppingCart({ open, setOpen }) {
                                                                                     +
                                                                                 </button>
                                                                             </div>
+                                                                            {/* Remove product button */}
                                                                             <button
                                                                                 onClick={() =>
                                                                                     removeFromCart(
@@ -163,7 +175,7 @@ export default function ShoppingCart({ open, setOpen }) {
                                                 </div>
                                             </div>
                                         </div>
-
+                                        {/* Checkout section */}
                                         <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                                             <div className="flex justify-between text-base font-medium text-gray-900">
                                                 <p>Subtotal</p>
@@ -173,6 +185,7 @@ export default function ShoppingCart({ open, setOpen }) {
                                                 Shipping and taxes calculated at
                                                 checkout.
                                             </p>
+                                            {/* Checkout button */}
                                             <div className="mt-6">
                                                 <button
                                                     onClick={() =>
@@ -188,7 +201,7 @@ export default function ShoppingCart({ open, setOpen }) {
                                                     </Link>
                                                 </button>
                                             </div>
-
+                                            {/* Continue shopping link */}
                                             <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
                                                 <p>or</p>
                                                 <button
